@@ -5,6 +5,8 @@ using System.Linq;
 namespace HashCode {
     class Program {
         static void Main(string[] args) {
+            Console.WriteLine("Reading initial data");
+
             var model = new Model();
             using (var sr = new StreamReader(args[0])) {
                 var n = sr
@@ -43,26 +45,40 @@ namespace HashCode {
                 }
             }
 
-            Console.WriteLine("Data read succesfully. Starting simulation.");
+            Console.WriteLine("Data read succesfully. Configuring traffic lights.");
 
             model.Intersections[1].TrafficLights.Add(new TrafficLight {
-                Street = model.Streets.Single(s => s.Name == "rue-d-athenes"),
+                Street = model.Intersections[1].Incoming.Single(s => s.Name == "rue-d-athenes"),
                 GreenDuration = 2,
             });
             model.Intersections[1].TrafficLights.Add(new TrafficLight {
-                Street = model.Streets.Single(s => s.Name == "rue-d-amsterdam"),
+                Street = model.Intersections[1].Incoming.Single(s => s.Name == "rue-d-amsterdam"),
                 GreenDuration = 1,
             });
 
             model.Intersections[0].TrafficLights.Add(new TrafficLight {
-                Street = model.Streets.Single(s => s.Name == "rue-de-londres"),
+                Street = model.Intersections[0].Incoming.Single(s => s.Name == "rue-de-londres"),
                 GreenDuration = 2,
             });
 
             model.Intersections[2].TrafficLights.Add(new TrafficLight {
-                Street = model.Streets.Single(s => s.Name == "rue-de-moscou"),
+                Street = model.Intersections[2].Incoming.Single(s => s.Name == "rue-de-moscou"),
                 GreenDuration = 1,
             });
+
+            foreach (var i in model.Intersections) {
+                i.Init();
+            }
+
+            Console.WriteLine("Running simulation.");
+            for (int t = 0; t < model.Duration; t++) {
+                foreach (var i in model.Intersections) {
+                    if (i.TrafficLights.Count == 0) continue;
+                    i.SwitchTrafficLight();
+                }
+            }
+
+            Console.WriteLine("Simulation completed");
         }
     }
 }

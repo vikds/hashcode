@@ -30,11 +30,44 @@ namespace HashCode {
         public List<Street> Outcoming = new List<Street>();
 
         public List<TrafficLight> TrafficLights = new List<TrafficLight>();
+
+        private int currentTrafficLightIndex = 0;
+
+        public void Init() {
+            if (TrafficLights.Count == 0) return;
+            currentTrafficLightIndex = TrafficLights.Count - 1;
+        }
+
+        public void SwitchTrafficLight() {
+            if (TrafficLights.Count == 0) return;
+
+            var current = TrafficLights[currentTrafficLightIndex];
+            if (current.GreenSecondsLeft > 0) {
+                current.GreenSecondsLeft--;
+            }
+            else if (current.GreenSecondsLeft == 0) {
+                current.Light = TrafficLight.State.Red;
+                currentTrafficLightIndex++;
+                if (currentTrafficLightIndex >= TrafficLights.Count) {
+                    currentTrafficLightIndex = 0;
+                }
+                var newCurrent = TrafficLights[currentTrafficLightIndex];
+                newCurrent.GreenSecondsLeft = newCurrent.GreenDuration;
+                newCurrent.Light = TrafficLight.State.Green;
+            }
+        }
     }
 
     public class TrafficLight {
         public Street Street;
         public int GreenDuration;
+        public State Light = State.Red;
+        public int GreenSecondsLeft;
+
+        public enum State {
+            Green,
+            Red
+        }
     }
 
     public class Street {
