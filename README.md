@@ -12,8 +12,10 @@ $ mkdir build
 $ cd build
 $ cmake ..
 ...
-[100%] Built target hashcode
+-- Build files have been written to: ~/hashcode/cpp/build
 $ make
+...
+[100%] Built target hashcode
 $ ./hashcode
 Usage: ./hashcode [-io] [-i input][-o output]
 ...
