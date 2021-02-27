@@ -3,8 +3,14 @@ cmake_minimum_required(VERSION 3.18)
 project (hashcode)
 
 set(SOURCES
-    src/hello.cpp
+    src/car.cpp
+    src/intersection.cpp
     src/main.cpp
+    src/model.cpp
+    src/result.cpp
+    src/solution.cpp
+    src/street.cpp
+    src/traffic_light.cpp
 )
 
 add_executable(hashcode ${SOURCES})

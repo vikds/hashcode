@@ -1,10 +1,10 @@
 #include <getopt.h>
-#include <iostream>
-#include <sstream>
-#include <string>
 #include <sysexits.h>
 
-#include "hello.hpp"
+#include "fwd.hpp"
+#include "model.hpp"
+#include "solution.hpp"
+#include "result.hpp"
 
 using namespace hashcode;
 
