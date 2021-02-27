@@ -43,11 +43,6 @@ Arguments ParseArguments(int argc, char* argv[]) {
                 Usage(binary_name);
         }
     }
-    argc -= optind;
-    argv += optind;
-    if (argc != 0) {
-        Usage(binary_name);
-    }
     bool is_valid = true;
     std::ostringstream oss;
     if (arguments.input_file.empty()) {
