@@ -5,8 +5,8 @@
 namespace hashcode
 {
 
-class Result {
-    void Print();
+class Simulator {
+    size_t Run(Model& model);
 };
 
 } // namespace hashcode

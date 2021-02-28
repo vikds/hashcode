@@ -1,5 +1,6 @@
 #include <getopt.h>
 #include <sysexits.h>
+#include <filesystem>
 
 #include "fwd.hpp"
 #include "model.hpp"
@@ -61,10 +62,29 @@ Arguments ParseArguments(int argc, char* argv[]) {
     return arguments;
 }
 
+bool file_exist(const std::string& file_name) {
+  return access(file_name.c_str(), F_OK) != -1;
+}
+
+bool delete_file(const std::string& file_name) {
+    return unlink(file_name.c_str()) != -1;
+}
+
 int main(int argc, char* argv[]) {
     try {
         Arguments args = ParseArguments(argc, argv);
-        std::cout << "OK";
+
+        if (!file_exist(args.input_file)) {
+            std::cerr << "Input file doesn't exist: " << args.input_file << std::endl;
+            return EXIT_FAILURE;
+        }
+        if (file_exist(args.output_file)) {
+            delete_file(args.output_file);
+        }
+
+        Model model;
+        model.LoadFromFile(args.input_file);
+
     } catch(const std::exception& ex) {
         return EXIT_FAILURE;
     }

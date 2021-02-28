@@ -5,8 +5,8 @@
 namespace hashcode
 {
 
-void TrafficLight::Print() {
-    std::cout << "Hello TrafficLight!" << std::endl;
-}
+    void TrafficLight::Tick() {
+        return;
+    }
 
 } // namespace hashcode

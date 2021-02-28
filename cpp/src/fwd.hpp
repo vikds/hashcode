@@ -10,9 +10,10 @@ namespace hashcode
 {
 
 class Car;
-class Intersection;
+struct Intersection;
 class Model;
 class Result;
+class Simulator;
 class Solution;
 class Street;
 class TrafficLight;

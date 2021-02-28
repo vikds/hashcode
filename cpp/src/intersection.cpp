@@ -5,8 +5,4 @@
 namespace hashcode
 {
 
-void Intersection::Print() {
-    std::cout << "Hello Intersection!" << std::endl;
-}
-
 } // namespace hashcode

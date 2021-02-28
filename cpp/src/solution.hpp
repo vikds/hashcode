@@ -1,5 +1,7 @@
 #pragma once
 
+#include "fwd.hpp"
+
 namespace hashcode
 {
 

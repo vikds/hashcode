@@ -1,10 +1,13 @@
 #pragma once
 
+#include "fwd.hpp"
+
 namespace hashcode
 {
 
-class Intersection {
-    void Print();
+struct Intersection {
+    std::vector<Street*> incoming;
+    std::vector<Street*> outgoing;
 };
 
 } // namespace hashcode

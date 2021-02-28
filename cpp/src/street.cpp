@@ -5,8 +5,10 @@
 namespace hashcode
 {
 
-void Street::Print() {
-    std::cout << "Hello Street!" << std::endl;
+void Street::Reset() {
+    cars.clear();
+    cars_expected = 0;
+    time_wasted = 0;
 }
 
 } // namespace hashcode
