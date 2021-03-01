@@ -5,7 +5,8 @@ using System.Linq;
 namespace HashCode {
     class Program {
         static void Main(string[] args) {
-            Console.WriteLine("Reading initial data");
+            Logger.Init(true);
+            Logger.Log("Reading initial data from {0}", args[0]);
 
             Model model;
             using (var sr = new StreamReader(args[0])) {
@@ -51,7 +52,7 @@ namespace HashCode {
                 }
             }
 
-            Console.WriteLine("Data read succesfully. Configuring traffic lights.");
+            Logger.Log("Data read successfully. Configuring traffic lights.");
 
             model.Intersections[1].TrafficLights.Add(new TrafficLight() {
                 Street = model.Intersections[1].Incoming.Single(s => s.Name == "rue-d-athenes"),
@@ -83,52 +84,53 @@ namespace HashCode {
                 c.SetInitialState();
             }
 
-            Console.WriteLine("Running simulation.");
-            Console.WriteLine();
+            Logger.Log("Running simulation.");
+            Logger.Divider();
             for (int timer = 0; timer <= model.Duration; timer++) {
-                Console.WriteLine("Timer is {0} >>>>>>>>>>>", timer);
+                Logger.Log("Timer is {0} >>>>>>>>>>>", timer);
 
                 // deal with traffic lights
                 foreach (var intersection in model.Intersections) {
-                    Console.WriteLine("Checking intersection {0}", intersection.Id);
+                    intersection.CarJustPassed = false;
+                    Logger.Log("Checking intersection {0}", intersection.Id);
                     if (intersection.TrafficLights.Count == 0) {
-                        Console.WriteLine("Intersection {0} has no traffic lights - it's always RED", intersection.Id);
+                        Logger.Log("Intersection {0} has no traffic lights - it's always Red", intersection.Id);
                         continue;
                     }
                     intersection.SwitchTrafficLight();
                     foreach (var tl in intersection.TrafficLights) {
-                        if (tl.Light == TrafficLight.State.Green) {
-                            Console.WriteLine("Traffic light on street {0} is {1}. Seconds left {2}", tl.Street.Name, tl.Light, tl.GreenSecondsLeft);
+                        if (tl.State == TrafficLight.Colors.Green) {
+                            Logger.Log("Traffic light on street {0} is {1}. Seconds left {2}", tl.Street.Name, tl.State, tl.GreenSecondsLeft);
                         } else {
-                            Console.WriteLine("Traffic light on street {0} is {1}", tl.Street.Name, tl.Light);
+                            Logger.Log("Traffic light on street {0} is {1}", tl.Street.Name, tl.State);
                         }
                     }
                 }
 
                 // deal with cars
                 foreach (var car in model.Cars) {
-                    Console.WriteLine("Checking car {0}", car.Id);
+                    Logger.Log("Checking car {0}", car.Id);
                     if (car.Finished) {
-                        Console.WriteLine("Car {0} has already finished - skipping", car.Id);
+                        Logger.Log("Car {0} has already finished - skipping", car.Id);
                         continue;
                     }
                     car.Move();
                     if (car.Finished) {
                         var score = model.Bonus + (model.Duration - timer);
-                        Console.WriteLine(
+                        Logger.Log(
                             "Car {0} has just finished with score {1} = {2} + ({3} - {4})",
                             car.Id, score, model.Bonus, model.Duration, timer
                         );
                         model.Score += score;
                     } else {
-                        Console.WriteLine(
+                        Logger.Log(
                             "Car {0} is currently on street {1}. Left on current street {2}",
                             car.Id, car.CurrentStreet.Name, car.LeftOnCurrentStreet
                         );
                     }
                 }
-                Console.WriteLine("Timer {0} finished <<<<<<<<<<<", timer);
-                Console.WriteLine();
+                Logger.Log("Timer {0} finished <<<<<<<<<<<", timer);
+                Logger.Divider();
             }
 
             Console.WriteLine("Simulation completed. Total score is {0}", model.Score);
