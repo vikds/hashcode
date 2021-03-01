@@ -47,7 +47,6 @@ TrafficSignaling Solution::GetBestTrafficSignaling() {
         if (schedule.empty()) {
             continue;
         }
-        std::cout << "end" << std::endl;
         traffic_signaling.traffic_lights.push_back(TrafficLight(is->id, schedule));
     }
 

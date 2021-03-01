@@ -61,7 +61,7 @@ void Car::Turn(size_t time) {
         finish_time_ = time;
         return;
     }
-    Street* next_street = path_[++position_];
+    Street* next_street = path_[position_];
     next_street->cars.push_back(this);
     left_to_go_ = next_street->travel_time();
 }
