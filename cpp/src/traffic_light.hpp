@@ -6,25 +6,34 @@ namespace hashcode
 {
 
 struct GreenLight {
+    GreenLight(Street* street, size_t duration);
+
     Street* street;
     size_t duration;
 };
 
 class TrafficLight {
 public:
-    TrafficLight(const std::vector<GreenLight>& schedule)
-      : schedule_(schedule),
-        direction_(0),
-        tick_(0)
-    {}
+    TrafficLight(size_t intersection_id, const Schedule& schedule);
 
-    void Tick();
+    size_t intersection_id() const {
+        return intersection_id_;
+    }
+    const Schedule& schedule() const {
+        return schedule_;
+    }
+
+public:
+    void Tick(size_t time);
+
+    void Reset();
 
 private:
     void Switch();
 
 private:
-    std::vector<GreenLight> schedule_;
+    size_t intersection_id_;
+    Schedule schedule_;
     size_t direction_;
     size_t tick_;
 };

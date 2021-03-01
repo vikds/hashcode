@@ -5,10 +5,10 @@
 #include "car.hpp"
 #include "intersection.hpp"
 #include "street.hpp"
-#include "traffic_light.hpp"
 
 namespace hashcode
 {
+
 class Model {
 public:
     void LoadFromFile(const std::string& file_name);
@@ -22,15 +22,18 @@ public:
     std::vector<Car>& cars() {
         return cars_;
     }
-    const std::vector<Intersection>& intersections() {
+    std::vector<Intersection>& intersections() {
         return intersections_;
     }
     std::vector<Street>& streets() {
         return streets_;
     }
-    std::vector<TrafficLight>& traffic_lights() {
-        return traffic_lights_;
-    }
+
+public:
+    void Reset();
+
+private:
+    void PushCarsToStreets();
 
 private:
     size_t simulation_time_; // up to 10k
@@ -39,7 +42,6 @@ private:
     std::vector<Car> cars_;
     std::vector<Intersection> intersections_;
     std::vector<Street> streets_;
-    std::vector<TrafficLight> traffic_lights_;
 };
 
 } // namespace hashcode

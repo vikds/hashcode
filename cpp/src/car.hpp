@@ -20,16 +20,19 @@ public:
     size_t min_required_time() const {
         return min_required_time_;
     }
+    std::vector<Street*> path() const {
+        return path_;
+    }
 
 public:
-    void Tick();
+    void Tick(size_t time);
     void Reset();
 
     bool HasFinished() const;
     bool IsWaiting() const;
 
 private:
-    void Turn();
+    void Turn(size_t time);
 
 private:
     std::vector<Street*> path_;

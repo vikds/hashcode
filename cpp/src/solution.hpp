@@ -6,7 +6,13 @@ namespace hashcode
 {
 
 class Solution {
-    void Print();
+public:
+    Solution(Model& model);
+
+    TrafficSignaling GetBestTrafficSignaling();
+
+private:
+    Model& model_;
 };
 
 } // namespace hashcode

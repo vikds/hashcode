@@ -5,7 +5,7 @@
 #include "fwd.hpp"
 #include "model.hpp"
 #include "solution.hpp"
-#include "result.hpp"
+#include "traffic_signaling.hpp"
 
 using namespace hashcode;
 
@@ -84,6 +84,10 @@ int main(int argc, char* argv[]) {
 
         Model model;
         model.LoadFromFile(args.input_file);
+
+        Solution solution(model);
+        TrafficSignaling result = solution.GetBestTrafficSignaling();
+        result.SaveToFile(args.output_file);
 
     } catch(const std::exception& ex) {
         return EXIT_FAILURE;

@@ -9,13 +9,7 @@ namespace hashcode
 
 class Street {
 public:
-    Street(size_t id, std::string name, size_t travel_time)
-      : id_(id),
-        name_(name),
-        travel_time_(travel_time),
-        cars_expected(0),
-        time_wasted(0)
-    {}
+    Street(size_t id, std::string name, size_t travel_time);
 
     size_t id() const {
         return id_;
@@ -30,10 +24,11 @@ public:
 public:
     void Reset();
 
-private: // resetable
+public: // resetable
     std::deque<Car*> cars;
     size_t cars_expected;
     size_t time_wasted;
+    bool is_green;
 
 private:
     size_t id_;

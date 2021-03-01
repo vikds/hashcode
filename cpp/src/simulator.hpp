@@ -6,7 +6,14 @@ namespace hashcode
 {
 
 class Simulator {
-    size_t Run(Model& model);
+public:
+    Simulator(Model& model);
+
+    size_t Run(TrafficSignaling& traffic_signaling);
+    void Reset();
+
+private:
+    Model& model_;
 };
 
 } // namespace hashcode
