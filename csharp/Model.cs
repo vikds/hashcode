@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using System.Linq;
 
 namespace HashCode {
     public class Model {
         public Model(int duration, int intersectionsNum, int streetsNum, int carsNum, int bonus) {
-            this.Duration = duration;
+            Duration = duration;
             Bonus = bonus;
             Intersections = new Intersection[intersectionsNum];
             for (int i = 0; i < Intersections.Length; i++) {
@@ -41,6 +40,8 @@ namespace HashCode {
 
         public List<TrafficLight> TrafficLights = new List<TrafficLight>();
 
+        public bool CarJustPassed = false;
+
         private int currentTrafficLightIndex = 0;
         public TrafficLight CurrentTrafficLight {
             get {
@@ -60,24 +61,24 @@ namespace HashCode {
                 CurrentTrafficLight.GreenSecondsLeft--;
             }
             if (CurrentTrafficLight.GreenSecondsLeft == 0) {
-                CurrentTrafficLight.Light = TrafficLight.State.Red;
+                CurrentTrafficLight.State = TrafficLight.Colors.Red;
                 currentTrafficLightIndex++;
                 if (currentTrafficLightIndex >= TrafficLights.Count) {
                     currentTrafficLightIndex = 0;
                 }
                 CurrentTrafficLight.GreenSecondsLeft = CurrentTrafficLight.GreenDuration;
-                CurrentTrafficLight.Light = TrafficLight.State.Green;
+                CurrentTrafficLight.State = TrafficLight.Colors.Green;
             }
         }
     }
 
-    public class TrafficLight {
+    public partial class TrafficLight {
         public Street Street;
         public int GreenDuration;
-        public State Light = State.Red;
+        public Colors State = Colors.Red;
         public int GreenSecondsLeft;
 
-        public enum State {
+        public enum Colors {
             Green,
             Red
         }
@@ -107,12 +108,29 @@ namespace HashCode {
             if (LeftOnCurrentStreet > 0) {
                 LeftOnCurrentStreet--;
             } else { // if (leftOnCurrentStreet == 0)
-                if (Route[currentStreetIndex].TrafficLight == null
-                        || Route[currentStreetIndex].TrafficLight.Light == TrafficLight.State.Green) {
+                if (CurrentStreet.EndsAt.CarJustPassed) {
+                    Logger.Log(
+                        "Car {0} is waiting in the line at intersection {1}",
+                        Id,
+                        CurrentStreet.EndsAt.Id
+                    );
+                } else if (CurrentStreet.TrafficLight != null
+                        && CurrentStreet.TrafficLight.State == TrafficLight.Colors.Red) {
+                    Logger.Log(
+                        "Car {0} is waiting for green light at intersection {1}",
+                        Id,
+                        CurrentStreet.EndsAt.Id
+                    );
+                }
+                if (!CurrentStreet.EndsAt.CarJustPassed
+                        && (CurrentStreet.TrafficLight == null
+                        || CurrentStreet.TrafficLight.State == TrafficLight.Colors.Green)) {
                     if (++currentStreetIndex >= Route.Length) {
+                        Logger.Log("Car {0} successfully finished", Id);
                         Finished = true;
                     } else {
-                        LeftOnCurrentStreet = Route[currentStreetIndex].Length - 1;
+                        CurrentStreet.StartsAt.CarJustPassed = true;
+                        LeftOnCurrentStreet = CurrentStreet.Length - 1;
                     }
                 }
             }
