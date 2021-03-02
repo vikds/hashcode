@@ -19,7 +19,7 @@ public:
     size_t intersection_id() const {
         return intersection_id_;
     }
-    const Schedule& schedule() const {
+    Schedule& schedule() {
         return schedule_;
     }
 

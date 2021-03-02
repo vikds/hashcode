@@ -12,6 +12,9 @@ public:
     TrafficSignaling GetBestTrafficSignaling();
 
 private:
+    TrafficSignaling InitializeWithCarsExpected();
+    
+private:
     Model& model_;
 };
 

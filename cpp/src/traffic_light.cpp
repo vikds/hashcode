@@ -28,8 +28,9 @@ void TrafficLight::Reset() {
     if (schedule_.empty()) {
         return;
     }
-    GreenLight& green_light = schedule_[direction_];
-    green_light.street->is_green = false;
+    for (Schedule::iterator green_light = schedule_.begin(); green_light != schedule_.end(); green_light++) {
+        green_light->street->is_green = false;
+    }
     schedule_.front().street->is_green = true;
     direction_ = 0;
     tick_ = 0;

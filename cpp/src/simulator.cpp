@@ -13,7 +13,7 @@ Simulator::Simulator(Model& model)
 {}
 
 size_t Simulator::Run(TrafficSignaling& signaling) {
-    for (size_t time = 0; time < model_.simulation_time(); time++) {
+    for (size_t time = 0; time <= model_.simulation_time(); time++) {
         for (std::vector<Car>::iterator car = model_.cars().begin(); car != model_.cars().end(); car++) {
             car->Tick(time);
         }
