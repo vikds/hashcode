@@ -20,7 +20,7 @@ public:
     size_t min_required_time() const {
         return min_required_time_;
     }
-    std::vector<Street*> path() const {
+    std::vector<Street*>& path() {
         return path_;
     }
 

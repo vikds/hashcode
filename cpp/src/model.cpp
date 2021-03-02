@@ -20,6 +20,13 @@ void Model::LoadFromFile(const std::string& file_name) {
     input >> cars;
     input >> finish_bonus_;
 
+    std::cout << "Simulation time: " << simulation_time_ << std::endl;
+    std::cout << "Intersections count: " << intersections << std::endl;
+    std::cout << "Streets count: " << streets << std::endl;
+    std::cout << "Cars count: " << cars << std::endl;
+    std::cout << "Finish bonus: " << finish_bonus_ << std::endl;
+
+    intersections_.reserve(intersections);
     for (size_t id = 0; id < intersections; id++) {
         intersections_.push_back(Intersection(id));
     }
@@ -29,12 +36,17 @@ void Model::LoadFromFile(const std::string& file_name) {
     std::string name;
     size_t travel_time;
     std::unordered_map<std::string, size_t> street_name_2_id;
+    streets_.reserve(streets);
     for (size_t id = 0; id < streets; id++) {
         input >> beg_is_id;
         input >> end_is_id;
         input >> name;
         input >> travel_time;
 
+        std::cout << "Street: " << name;
+        std::cout << " ";
+        std::cout << "(" << beg_is_id << "->" << end_is_id << ": " << travel_time << ")" << std::endl;
+    
         streets_.push_back(Street(id, name, travel_time));
         intersections_[beg_is_id].outgoing.push_back(&streets_.back());
         intersections_[end_is_id].incoming.push_back(&streets_.back());
@@ -43,9 +55,11 @@ void Model::LoadFromFile(const std::string& file_name) {
 
     size_t locations;
     std::vector<Street*> path;
+    cars_.reserve(cars);
     for (size_t i = 0; i < cars; i++) {
         path.clear();
         input >> locations;
+        path.reserve(locations);
         for (size_t j = 0; j < locations; j++) {
             input >> name;
             size_t street_id = street_name_2_id[name];

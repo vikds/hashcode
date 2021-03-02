@@ -37,21 +37,22 @@ TrafficSignaling Solution::GetBestTrafficSignaling() {
     TrafficSignaling traffic_signaling;
     for (std::vector<Intersection>::iterator is = model_.intersections().begin(); is != model_.intersections().end(); is++) {
         Schedule schedule;
-        for (std::vector<Street*>::iterator street = is->incoming.begin(); street != is->incoming.end(); street++) {
-            Street* street_ptr = *street;
-            if (street_ptr->cars_expected == 0) {
+        for (std::vector<Street*>::iterator it = is->incoming.begin(); it != is->incoming.end(); it++) {
+            Street* street = *it;
+            if (street->cars_expected == 0) {
                 continue;
             }
-            schedule.push_back(GreenLight(street_ptr, 1)); // TODO
+            schedule.push_back(GreenLight(street, 1)); // TODO
         }
         if (schedule.empty()) {
             continue;
         }
-        traffic_signaling.traffic_lights.push_back(TrafficLight(is->id, schedule));
+        TrafficLight traffic_light(is->id, schedule);
+        traffic_signaling.traffic_lights.push_back(traffic_light);
     }
 
     size_t bonus = simulator.Run(traffic_signaling);
-    std::cout << "Bonus: " << bonus << std::endl;
+    std::cout << "Finish bonus: " << bonus << std::endl;
     return traffic_signaling;
 }
 

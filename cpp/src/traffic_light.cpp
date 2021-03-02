@@ -25,6 +25,9 @@ TrafficLight::TrafficLight(size_t intersection_id, const Schedule& schedule)
 }
 
 void TrafficLight::Reset() {
+    if (schedule_.empty()) {
+        return;
+    }
     GreenLight curr_green_light = schedule_[direction_];
     curr_green_light.street->is_green = false;
     schedule_.front().street->is_green = true;
