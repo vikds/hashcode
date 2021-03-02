@@ -27,7 +27,9 @@ size_t Simulator::Run(TrafficSignaling& traffic_signaling) {
         if (!car->HasFinished()) {
             continue;
         }
-        score += model_.finish_bonus() + (model_.simulation_time() - car->finish_time());
+        size_t bonus = model_.finish_bonus() + (model_.simulation_time() - car->finish_time());
+        std::cout << "Car finished bonus: " << bonus << std::endl;
+        score += bonus;
     }
     return score;
 }
