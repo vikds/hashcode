@@ -15,12 +15,11 @@ Solution::Solution(Model& model)
   : model_(model)
 {}
 
+bool GreenLightNameGreater(const GreenLight& lhs, const GreenLight& rhs) {
+    return lhs.street->name() > rhs.street->name();
+}
+
 TrafficSignaling Solution::GetBestTrafficSignaling() {
-    Simulator simulator(model_);
-
-    size_t best_score = 0;
-    TrafficSignaling best_traffic_signaling;
-
     for (std::vector<Car>::iterator car = model_.cars().begin(); car != model_.cars().end(); car++) {
         size_t travel_time = 1; // taking last finish turn into accordance
         for (std::vector<Street*>::iterator it = car->path().begin(); it != car->path().end(); it++) {
@@ -34,7 +33,8 @@ TrafficSignaling Solution::GetBestTrafficSignaling() {
         }
     }
 
-    TrafficSignaling traffic_signaling;
+    size_t best_score = 0;
+    TrafficSignaling signaling;
     for (std::vector<Intersection>::iterator is = model_.intersections().begin(); is != model_.intersections().end(); is++) {
         Schedule schedule;
         for (std::vector<Street*>::iterator it = is->incoming.begin(); it != is->incoming.end(); it++) {
@@ -48,12 +48,13 @@ TrafficSignaling Solution::GetBestTrafficSignaling() {
             continue;
         }
         TrafficLight traffic_light(is->id, schedule);
-        traffic_signaling.traffic_lights.push_back(traffic_light);
+        signaling.traffic_lights.push_back(traffic_light);
     }
 
-    size_t bonus = simulator.Run(traffic_signaling);
-    std::cout << "Finish bonus: " << bonus << std::endl;
-    return traffic_signaling;
+    Simulator simulator(model_);
+    size_t bonus = simulator.Run(signaling);
+    std::cout << "Best traffic signaling bonus: " << bonus << std::endl;
+    return signaling;
 }
 
 } // namespace hashcode

@@ -9,8 +9,6 @@ class Car {
 public:
     Car(const std::vector<Street*>& path);
 
-    Street* current_street();
-
     size_t finish_time() const {
         return finish_time_;
     }

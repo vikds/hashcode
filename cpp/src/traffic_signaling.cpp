@@ -22,4 +22,10 @@ void TrafficSignaling::SaveToFile(const std::string& file_name) {
     }
 }
 
+void TrafficSignaling::Reset() {
+    for (std::vector<TrafficLight>::iterator light = traffic_lights.begin(); light != traffic_lights.end(); light++) {
+        light->Reset();
+    }
+}
+
 } // namespace hashcode

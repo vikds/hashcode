@@ -43,11 +43,7 @@ void Model::LoadFromFile(const std::string& file_name) {
         input >> name;
         input >> travel_time;
 
-        std::cout << "Street: " << name;
-        std::cout << " ";
-        std::cout << "(" << beg_is_id << "->" << end_is_id << ": " << travel_time << ")" << std::endl;
-    
-        streets_.push_back(Street(id, name, travel_time));
+        streets_.push_back(Street(name, travel_time));
         intersections_[beg_is_id].outgoing.push_back(&streets_.back());
         intersections_[end_is_id].incoming.push_back(&streets_.back());
         street_name_2_id[name] = id;
@@ -86,8 +82,8 @@ void Model::PushCarsToStreets() {
         if (car->path().empty()) {
             continue;
         }
-        Street* first_street = car->path().front();
-        first_street->cars.push_back(&*car);
+        Street* street = car->path().front();
+        street->cars.push_back(&*car);
     }
 }
 

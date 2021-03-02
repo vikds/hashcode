@@ -11,6 +11,8 @@ class TrafficSignaling {
 public:
     void SaveToFile(const std::string& file_name);
 
+    void Reset();
+
 public:
     std::vector<TrafficLight> traffic_lights;
 };

@@ -9,11 +9,8 @@ namespace hashcode
 
 class Street {
 public:
-    Street(size_t id, std::string name, size_t travel_time);
+    Street(const std::string& name, size_t travel_time);
 
-    size_t id() const {
-        return id_;
-    }
     const std::string& name() const {
         return name_;
     }
@@ -29,9 +26,9 @@ public: // resetable
     size_t cars_expected;
     size_t time_wasted;
     bool is_green;
+    bool ticked;
 
 private:
-    size_t id_;
     std::string name_;
     size_t travel_time_;
 };

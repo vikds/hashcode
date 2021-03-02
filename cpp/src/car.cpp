@@ -21,21 +21,17 @@ Car::Car(const std::vector<Street*>& path)
     }
 }
 
-Street* Car::current_street() {
-    return path_[position_];
-}
-
 void Car::Tick(size_t time) {
     if (HasFinished()) {
         return;
     }
-    if (IsWaiting()) {
-        Street* curr_street = current_street();
-        if (curr_street->is_green && this == curr_street->cars.front()) {
-            Turn(time);
-        }
-    } else {
+    if (left_to_go_ > 0) {
         left_to_go_--;
+        return;
+    }
+    Street* street = path_[position_];
+    if (street->is_green && !street->ticked && this == street->cars.front()) {
+        Turn(time);
     }
 }
 
@@ -54,8 +50,9 @@ bool Car::IsWaiting() const {
 }
 
 void Car::Turn(size_t time) {
-    Street* curr_street = current_street();
+    Street* curr_street = path_[position_];
     curr_street->cars.pop_front();
+    curr_street->ticked = true;
     position_++;
     if (HasFinished()) {
         finish_time_ = time;
