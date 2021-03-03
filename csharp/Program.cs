@@ -60,40 +60,36 @@ namespace HashCode {
                     intersection.SwitchTrafficLight();
                     foreach (var tl in intersection.TrafficLights) {
                         if (tl.State == TrafficLight.Colors.Green) {
-                            Logger.Log("Traffic light on street {0} is {1}. Seconds left {2}", tl.Street.Name, tl.State, tl.GreenSecondsLeft);
+                            Logger.Log($"Traffic light on street {tl.Street.Name} is {tl.State}. Seconds left {tl.GreenSecondsLeft}");
                         } else {
-                            Logger.Log("Traffic light on street {0} is {1}", tl.Street.Name, tl.State);
+                            Logger.Log($"Traffic light on street {tl.Street.Name} is {tl.State}");
                         }
                     }
                 }
 
                 // deal with cars
                 foreach (var car in model.Cars) {
-                    Logger.Log("Checking car {0}", car.Id);
+                    Logger.Log($"Checking car {car.Id}");
                     if (car.Finished) {
-                        Logger.Log("Car {0} has already finished - skipping", car.Id);
+                        Logger.Log($"Car {car.Id} has already finished - skipping");
                         continue;
                     }
                     car.Move();
                     if (car.Finished) {
                         var score = model.Bonus + (model.Duration - timer);
                         Logger.Log(
-                            "Car {0} has just finished with score {1} = {2} + ({3} - {4})",
-                            car.Id, score, model.Bonus, model.Duration, timer
+                            $"Car {car.Id} has just finished with score {score} = {model.Bonus} + ({model.Duration} - {timer})"
                         );
                         model.Score += score;
                     } else {
-                        Logger.Log(
-                            "Car {0} is currently on street {1}. Left on current street {2}",
-                            car.Id, car.CurrentStreet.Name, car.LeftOnCurrentStreet
-                        );
+                        Logger.Log($"Car {car.Id} is currently on street {car.CurrentStreet.Name}. Left on current street {car.LeftOnCurrentStreet}");
                     }
                 }
-                Logger.Log("Timer {0} finished <<<<<<<<<<<", timer);
+                Logger.Log($"Timer {timer} finished <<<<<<<<<<<");
                 Logger.Divider();
             }
 
-            Console.WriteLine("Simulation completed. Total score is {0}", model.Score);
+            Console.WriteLine($"Simulation completed. Total score is {model.Score}");
             ExportModel(model, parameters.InputFile, parameters.OutputFolder);
         }
 
