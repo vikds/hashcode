@@ -13,12 +13,15 @@ Simulator::Simulator(Model& model)
 {}
 
 size_t Simulator::Run(TrafficSignaling& signaling) {
+    Reset();
+    signaling.Reset();
     for (size_t time = 0; time <= model_.simulation_time(); time++) {
         for (std::vector<Car>::iterator car = model_.cars().begin(); car != model_.cars().end(); car++) {
             car->Tick(time);
         }
-        for (std::vector<TrafficLight>::iterator light = signaling.traffic_lights.begin(); light != signaling.traffic_lights.end(); light++) {
-            light->Tick(time);
+        std::vector<TrafficLight>& traffic_lights = signaling.traffic_lights;
+        for (std::vector<TrafficLight>::iterator traffic_light = traffic_lights.begin(); traffic_light != traffic_lights.end(); traffic_light++) {
+            traffic_light->Tick(time);
         }
         for (std::vector<Street>::iterator street = model_.streets().begin(); street != model_.streets().end(); street++) {
             street->ticked = false;

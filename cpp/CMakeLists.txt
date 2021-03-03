@@ -4,6 +4,7 @@ project (hashcode)
 
 set(SOURCES
     src/car.cpp
+    src/intersection.cpp
     src/main.cpp
     src/model.cpp
     src/simulator.cpp

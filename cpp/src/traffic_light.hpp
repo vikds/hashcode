@@ -5,8 +5,8 @@
 namespace hashcode
 {
 
-struct GreenLight {
-    GreenLight(Street* street, size_t duration);
+struct StreetLight {
+    StreetLight(Street* street, size_t duration);
 
     Street* street;
     size_t duration;
@@ -14,10 +14,10 @@ struct GreenLight {
 
 class TrafficLight {
 public:
-    TrafficLight(size_t intersection_id, const Schedule& schedule);
+    TrafficLight(Intersection* intersection, const Schedule& schedule);
 
-    size_t intersection_id() const {
-        return intersection_id_;
+    Intersection& intersection() {
+        return *intersection_;
     }
     Schedule& schedule() {
         return schedule_;
@@ -32,7 +32,7 @@ private:
     void Switch();
 
 private:
-    size_t intersection_id_;
+    Intersection* intersection_;
     Schedule schedule_;
     size_t direction_;
     size_t tick_;

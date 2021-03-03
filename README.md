@@ -21,3 +21,13 @@ Usage: ./hashcode [-io] [-i input][-o output]
 ...
 ```
 
+## C++ results
+
+    1. A – An example: 2,000 points
+    2. B – By the ocean: 4,566,698 points
+    3. C – Checkmate: 1,298,301 points
+    4. D – Daily commute: 1,571,590 points
+    5. E – Etoile: 714,314 points
+    6. F – Forever jammed: 1,341,936 points
+
+    Total: 9,494,839 points

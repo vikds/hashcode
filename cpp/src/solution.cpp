@@ -13,11 +13,12 @@
 namespace hashcode
 {
 
-Solution::Solution(Model& model)
-  : model_(model)
+Solution::Solution(Model& model, size_t attempts)
+  : model_(model),
+    attempts_(attempts)
 {}
 
-bool GreenLightDurationGreater(const GreenLight& lhs, const GreenLight& rhs) {
+bool StreetLightDurationGreater(const StreetLight& lhs, const StreetLight& rhs) {
     return lhs.duration > rhs.duration;
 }
 
@@ -26,20 +27,20 @@ TrafficSignaling Solution::GetBestTrafficSignaling() {
     TrafficSignaling signaling = InitializeWithCarsExpected();
     TrafficSignaling best_signaling = signaling;
     size_t max_bonus = simulator.Run(signaling);
-    std::cout << "Initialized signaling bonus: " << max_bonus << std::endl;
-    for (size_t attempt = 0; attempt < 5; attempt++) {
-        for (std::vector<TrafficLight>::iterator light = signaling.traffic_lights.begin(); light != signaling.traffic_lights.end(); light++) {
-            size_t max_time_wasted = 0;
-            for (Schedule::iterator green_light = light->schedule().begin(); green_light != light->schedule().end(); green_light++) {
-                max_time_wasted = std::max(max_time_wasted, green_light->street->time_wasted);
+    std::cout << "Initial signaling bonus: " << max_bonus << std::endl;
+    for (size_t attempt = 0; attempt < attempts_; attempt++) {
+        std::vector<TrafficLight>& traffic_lights = signaling.traffic_lights;
+        size_t max_time_wasted = 0;
+        for (std::vector<TrafficLight>::iterator traffic_light = traffic_lights.begin(); traffic_light != traffic_lights.end(); traffic_light++) {
+            max_time_wasted = std::max(max_time_wasted, traffic_light->intersection().time_wasted);
+        }
+        if (max_time_wasted == 0) {
+            break;
+        }
+        for (std::vector<TrafficLight>::iterator traffic_light = traffic_lights.begin(); traffic_light != traffic_lights.end(); traffic_light++) {
+            if (traffic_light->intersection().time_wasted == max_time_wasted) {
+                ChangeTrafficLightSchedule(*traffic_light);
             }
-            for (Schedule::iterator green_light = light->schedule().begin(); green_light != light->schedule().end(); green_light++) {
-                if (green_light->street->time_wasted == max_time_wasted) {
-                    green_light->duration++;
-                }
-            }
-            std::sort(light->schedule().begin(), light->schedule().end(), GreenLightDurationGreater);
-            light->Reset();
         }
         size_t bonus = simulator.Run(signaling);
         std::cout << "Intermediate signaling bonus: " << bonus << std::endl;
@@ -48,13 +49,30 @@ TrafficSignaling Solution::GetBestTrafficSignaling() {
             max_bonus = bonus;
             attempt = 0;
         }
-        simulator.Reset();
     }
     std::cout << "Best traffic signaling bonus: " << max_bonus << std::endl;
     return best_signaling;
 }
 
-TrafficSignaling Solution::InitializeWithCarsExpected() {
+bool Solution::ChangeTrafficLightSchedule(TrafficLight& traffic_light) {
+    size_t max_time_wasted = 0;
+    Schedule& schedule = traffic_light.schedule();
+    for (Schedule::iterator street_light = schedule.begin(); street_light != schedule.end(); street_light++) {
+        max_time_wasted = std::max(max_time_wasted, street_light->street->time_wasted);
+    }
+    if (max_time_wasted == 0) {
+        return false;
+    }
+    for (Schedule::iterator street_light = schedule.begin(); street_light != schedule.end(); street_light++) {
+        if (street_light->street->time_wasted == max_time_wasted) {
+            street_light->duration++;
+        }
+    }
+    std::sort(schedule.begin(), schedule.end(), StreetLightDurationGreater);
+    return true;
+}
+
+void Solution::CountExpectedCarsOnTheStreets() {
     for (std::vector<Car>::iterator car = model_.cars().begin(); car != model_.cars().end(); car++) {
         if (car->path().empty()) {
             continue;
@@ -71,7 +89,10 @@ TrafficSignaling Solution::InitializeWithCarsExpected() {
             street->cars_expected++;
         }
     }
+}
 
+TrafficSignaling Solution::InitializeWithCarsExpected() {
+    CountExpectedCarsOnTheStreets();
     TrafficSignaling signaling;
     for (std::vector<Intersection>::iterator is = model_.intersections().begin(); is != model_.intersections().end(); is++) {
         Schedule schedule;
@@ -80,17 +101,17 @@ TrafficSignaling Solution::InitializeWithCarsExpected() {
             if (street->cars_expected == 0) {
                 continue;
             }
-            schedule.push_back(GreenLight(street, street->cars_expected));
+            schedule.push_back(StreetLight(street, street->cars_expected));
         }
         if (schedule.empty()) {
             continue;
         }
-        std::sort(schedule.begin(), schedule.end(), GreenLightDurationGreater);
+        std::sort(schedule.begin(), schedule.end(), StreetLightDurationGreater);
         size_t min_cars_expected = schedule.back().duration;
-        for (Schedule::iterator green_light = schedule.begin(); green_light != schedule.end(); green_light++) {
-            green_light->duration = std::round(static_cast<double>(green_light->duration) / min_cars_expected);
+        for (Schedule::iterator street_light = schedule.begin(); street_light != schedule.end(); street_light++) {
+            street_light->duration = 1; // std::round(static_cast<double>(street_light->duration) / min_cars_expected);
         }
-        TrafficLight traffic_light(is->id, schedule);
+        TrafficLight traffic_light(&*is, schedule);
         signaling.traffic_lights.push_back(traffic_light);
     }
     return signaling;

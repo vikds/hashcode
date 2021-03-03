@@ -13,13 +13,19 @@ void Usage(const char* binary_name) {
     std::cerr << "Usage: " << binary_name << " [-io] [-i input][-o output]" << std::endl;
     std::cerr << "\t-i|--input (required): input file" << std::endl;
     std::cerr << "\t-o|--output (required): output file" << std::endl;
+    std::cerr << "\t-a|--attempts: attempts in improve result (default: 10)" << std::endl;
     std::cerr << "\t-h|--help: show this usage" << std::endl;
     std::exit(EX_USAGE);
 }
 
 struct Arguments {
+    Arguments()
+      : attempts(10)
+    {}
+
     std::string input_file;
     std::string output_file;
+    size_t attempts;
 };
 
 Arguments ParseArguments(int argc, char* argv[]) {
@@ -27,6 +33,7 @@ Arguments ParseArguments(int argc, char* argv[]) {
     static struct option long_options[] = {
         { "input", required_argument, nullptr, 'i' },
         { "output", required_argument, nullptr, 'o' },
+        { "attempts", required_argument, nullptr, 'a' },
         { "help", no_argument, nullptr, 'h' },
         { nullptr, 0, nullptr, 0 }
     };
@@ -39,6 +46,9 @@ Arguments ParseArguments(int argc, char* argv[]) {
                 break;
             case 'o':
                 arguments.output_file = optarg;
+                break;
+            case 'a':
+                arguments.attempts = std::atoi(optarg);
                 break;
             case 'h':
                 Usage(binary_name);
@@ -85,7 +95,7 @@ int main(int argc, char* argv[]) {
         Model model;
         model.LoadFromFile(args.input_file);
 
-        Solution solution(model);
+        Solution solution(model, args.attempts);
         TrafficSignaling result = solution.GetBestTrafficSignaling();
         result.SaveToFile(args.output_file);
 

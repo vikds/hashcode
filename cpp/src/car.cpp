@@ -1,8 +1,7 @@
 #include "car.hpp"
 
-#include "street.hpp"
-
 #include "fwd.hpp"
+#include "street.hpp"
 
 namespace hashcode
 {
@@ -29,10 +28,10 @@ void Car::Tick(size_t time) {
     }
     if (IsWaiting()) {
         Street* street = path_[position_];
-        if (street->is_green && !street->ticked && this == street->cars.front()) {
+        if (street->IsAllowedToTurn(this)) {
             Turn(time);
         } else {
-            street->time_wasted++;
+            street->TickCosts();
         }
     }
 }
@@ -53,6 +52,11 @@ bool Car::IsWaiting() const {
 
 void Car::Turn(size_t time) {
     Street* curr_street = path_[position_];
+    if (this != curr_street->cars.front()) {
+        std::ostringstream oss;
+        oss << "A moving car is not first in queue on the street: " << curr_street->name();
+        throw std::runtime_error(oss.str());
+    }
     curr_street->cars.pop_front();
     curr_street->ticked = true;
     position_++;

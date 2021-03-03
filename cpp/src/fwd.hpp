@@ -10,15 +10,15 @@ namespace hashcode
 {
 
 class Car;
-struct GreenLight;
-struct Intersection;
+class Intersection;
 class Model;
 class Simulator;
 class Solution;
 class Street;
+struct StreetLight;
 class TrafficLight;
 class TrafficSignaling;
 
-typedef std::vector<GreenLight> Schedule; 
+typedef std::vector<StreetLight> Schedule; 
 
 } // namespace hashcode
