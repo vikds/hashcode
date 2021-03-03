@@ -54,7 +54,7 @@ void Car::Turn(size_t time) {
     Street* curr_street = path_[position_];
     if (this != curr_street->cars.front()) {
         std::ostringstream oss;
-        oss << "A moving car is not first in queue on the street: " << curr_street->name();
+        oss << "A moving car is not the first in the queue on the street: " << curr_street->name();
         throw std::runtime_error(oss.str());
     }
     curr_street->cars.pop_front();

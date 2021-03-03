@@ -107,9 +107,8 @@ TrafficSignaling Solution::InitializeWithCarsExpected() {
             continue;
         }
         std::sort(schedule.begin(), schedule.end(), StreetLightDurationGreater);
-        size_t min_cars_expected = schedule.back().duration;
         for (Schedule::iterator street_light = schedule.begin(); street_light != schedule.end(); street_light++) {
-            street_light->duration = 1; // std::round(static_cast<double>(street_light->duration) / min_cars_expected);
+            street_light->duration = 1;
         }
         TrafficLight traffic_light(&*is, schedule);
         signaling.traffic_lights.push_back(traffic_light);

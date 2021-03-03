@@ -30,7 +30,7 @@ bool Street::IsAllowedToTurn(Car* car) const {
     }
     if (cars.empty()) {
         std::ostringstream oss;
-        oss << "Cars are not placed on the street: " << name_;
+        oss << "There are no cars placed (left) on the street: " << name_;
         throw std::runtime_error(oss.str());
     }
     return car == cars.front();
