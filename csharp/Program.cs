@@ -17,7 +17,7 @@ namespace HashCode {
             };
             for (int i = 0; i < 10; i++) {
                 var freshModel = model.Clone();
-                Simlate(parameters, freshModel);
+                RunSimulation(freshModel);
                 Console.WriteLine($"Simulation completed. Total score is {freshModel.Score}");
                 if (bestModel.Score < freshModel.Score) {
                     bestModel = freshModel;
@@ -27,7 +27,7 @@ namespace HashCode {
             ExportModel(bestModel, parameters.InputFile, parameters.OutputFolder);
         }
 
-        private static void Simlate(Parameters parameters, Model model) {
+        private static void RunSimulation(Model model) {
             Logger.Log("Data read successfully. Configuring traffic lights.");
             GenerateTrafficLightsSchedule(model);
 
