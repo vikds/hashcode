@@ -12,26 +12,24 @@ namespace HashCode {
 
             var model = ImportModel(parameters.InputFile);
 
+            Model bestModel = new Model() {
+                Score = int.MinValue,
+            };
+            for (int i = 0; i < 10; i++) {
+                var freshModel = model.Clone();
+                Simlate(parameters, freshModel);
+                Console.WriteLine($"Simulation completed. Total score is {freshModel.Score}");
+                if (bestModel.Score < freshModel.Score) {
+                    bestModel = freshModel;
+                }
+            }
+            Console.WriteLine($"Best score is {bestModel.Score}");
+            ExportModel(bestModel, parameters.InputFile, parameters.OutputFolder);
+        }
+
+        private static void Simlate(Parameters parameters, Model model) {
             Logger.Log("Data read successfully. Configuring traffic lights.");
-
-            model.Intersections[1].TrafficLights.Add(new TrafficLight() {
-                Street = model.Intersections[1].Incoming.Single(s => s.Name == "rue-d-athenes"),
-                GreenDuration = 2,
-            });
-            model.Intersections[1].TrafficLights.Add(new TrafficLight() {
-                Street = model.Intersections[1].Incoming.Single(s => s.Name == "rue-d-amsterdam"),
-                GreenDuration = 1,
-            });
-
-            model.Intersections[0].TrafficLights.Add(new TrafficLight() {
-                Street = model.Intersections[0].Incoming.Single(s => s.Name == "rue-de-londres"),
-                GreenDuration = 2,
-            });
-
-            model.Intersections[2].TrafficLights.Add(new TrafficLight() {
-                Street = model.Intersections[2].Incoming.Single(s => s.Name == "rue-de-moscou"),
-                GreenDuration = 1,
-            });
+            GenerateTrafficLightsSchedule(model);
 
             foreach (var i in model.Intersections) {
                 foreach (var t in i.TrafficLights) {
@@ -88,9 +86,27 @@ namespace HashCode {
                 Logger.Log($"Timer {timer} finished <<<<<<<<<<<");
                 Logger.Divider();
             }
+        }
 
-            Console.WriteLine($"Simulation completed. Total score is {model.Score}");
-            ExportModel(model, parameters.InputFile, parameters.OutputFolder);
+        private static void GenerateTrafficLightsSchedule(Model model) {
+            model.Intersections[1].TrafficLights.Add(new TrafficLight() {
+                Street = model.Intersections[1].Incoming.Single(s => s.Name == "rue-d-athenes"),
+                GreenDuration = 2,
+            });
+            model.Intersections[1].TrafficLights.Add(new TrafficLight() {
+                Street = model.Intersections[1].Incoming.Single(s => s.Name == "rue-d-amsterdam"),
+                GreenDuration = 1,
+            });
+
+            model.Intersections[0].TrafficLights.Add(new TrafficLight() {
+                Street = model.Intersections[0].Incoming.Single(s => s.Name == "rue-de-londres"),
+                GreenDuration = 2,
+            });
+
+            model.Intersections[2].TrafficLights.Add(new TrafficLight() {
+                Street = model.Intersections[2].Incoming.Single(s => s.Name == "rue-de-moscou"),
+                GreenDuration = 1,
+            });
         }
 
         private static Model ImportModel(string fileName) {
