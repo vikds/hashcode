@@ -13,7 +13,7 @@ Simulator::Simulator(Model& model)
 {}
 
 size_t Simulator::Run(TrafficSignaling& signaling) {
-    Reset();
+    model_.Reset();
     signaling.Reset();
     for (size_t time = 0; time <= model_.simulation_time(); time++) {
         for (std::vector<Car>::iterator car = model_.cars().begin(); car != model_.cars().end(); car++) {
@@ -24,7 +24,7 @@ size_t Simulator::Run(TrafficSignaling& signaling) {
             traffic_light->Tick(time);
         }
         for (std::vector<Street>::iterator street = model_.streets().begin(); street != model_.streets().end(); street++) {
-            street->ticked = false;
+            street->car_passed = false;
         }
     }
     size_t score = 0;
@@ -36,10 +36,6 @@ size_t Simulator::Run(TrafficSignaling& signaling) {
         score += bonus;
     }
     return score;
-}
-
-void Simulator::Reset() {
-    model_.Reset();
 }
 
 } // namespace hashcode

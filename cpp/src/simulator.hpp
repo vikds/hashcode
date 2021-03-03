@@ -10,7 +10,6 @@ public:
     Simulator(Model& model);
 
     size_t Run(TrafficSignaling& traffic_signaling);
-    void Reset();
 
 private:
     Model& model_;

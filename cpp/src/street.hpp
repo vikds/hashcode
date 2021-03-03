@@ -32,8 +32,8 @@ public: // resetable
     std::deque<Car*> cars;
     size_t cars_expected;
     size_t time_wasted;
+    bool car_passed;
     bool is_green;
-    bool ticked;
 
 private:
     std::string name_;

@@ -18,7 +18,7 @@ Solution::Solution(Model& model, size_t attempts)
     attempts_(attempts)
 {}
 
-bool StreetLightDurationGreater(const StreetLight& lhs, const StreetLight& rhs) {
+bool StreetLightDurationDesc(const StreetLight& lhs, const StreetLight& rhs) {
     return lhs.duration > rhs.duration;
 }
 
@@ -68,7 +68,7 @@ bool Solution::ChangeTrafficLightSchedule(TrafficLight& traffic_light) {
             street_light->duration++;
         }
     }
-    std::sort(schedule.begin(), schedule.end(), StreetLightDurationGreater);
+    std::sort(schedule.begin(), schedule.end(), StreetLightDurationDesc);
     return true;
 }
 
@@ -77,12 +77,12 @@ void Solution::CountExpectedCarsOnTheStreets() {
         if (car->path().empty()) {
             continue;
         }
-        size_t travel_time = 1;
+        size_t travel_time = 0;
         for (std::vector<Street*>::iterator it = car->path().begin(); it != car->path().end(); it++) {
-            Street* street = *it;
             if (travel_time > model_.simulation_time()) {
-                break; // he will never get there...
+                break;
             }
+            Street* street = *it;
             if (it != car->path().begin()) {
                 travel_time += street->travel_time();
             }
@@ -95,8 +95,9 @@ TrafficSignaling Solution::InitializeWithCarsExpected() {
     CountExpectedCarsOnTheStreets();
     TrafficSignaling signaling;
     for (std::vector<Intersection>::iterator is = model_.intersections().begin(); is != model_.intersections().end(); is++) {
+        Intersection& intersection = *is;
         Schedule schedule;
-        for (std::vector<Street*>::iterator it = is->incoming.begin(); it != is->incoming.end(); it++) {
+        for (std::vector<Street*>::iterator it = intersection.incoming.begin(); it != intersection.incoming.end(); it++) {
             Street* street = *it;
             if (street->cars_expected == 0) {
                 continue;
@@ -106,11 +107,11 @@ TrafficSignaling Solution::InitializeWithCarsExpected() {
         if (schedule.empty()) {
             continue;
         }
-        std::sort(schedule.begin(), schedule.end(), StreetLightDurationGreater);
+        std::sort(schedule.begin(), schedule.end(), StreetLightDurationDesc);
         for (Schedule::iterator street_light = schedule.begin(); street_light != schedule.end(); street_light++) {
             street_light->duration = 1;
         }
-        TrafficLight traffic_light(&*is, schedule);
+        TrafficLight traffic_light(&intersection, schedule);
         signaling.traffic_lights.push_back(traffic_light);
     }
     return signaling;

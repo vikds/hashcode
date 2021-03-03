@@ -21,17 +21,26 @@ TrafficLight::TrafficLight(Intersection* intersection, const Schedule& schedule)
     if (schedule_.empty()) {
         return;
     }
-    schedule_.front().street->is_green = true;
+    StreetLight& street_light = schedule_.front();
+    if (street_light.duration > 0) {
+        street_light.street->is_green = true;
+    }
 }
 
 void TrafficLight::Reset() {
+    for (Schedule::iterator street_light = schedule_.begin(); street_light != schedule_.end();) {
+        if (street_light->duration == 0) {
+            street_light = schedule_.erase(street_light);
+        } else {
+            street_light->street->is_green = false;
+            street_light++;
+        }
+    }
     if (schedule_.empty()) {
         return;
     }
-    for (Schedule::iterator street_light = schedule_.begin(); street_light != schedule_.end(); street_light++) {
-        street_light->street->is_green = false;
-    }
-    schedule_.front().street->is_green = true;
+    StreetLight& street_light = schedule_.front();
+    street_light.street->is_green = true;
     direction_ = 0;
     tick_ = 0;
 }
