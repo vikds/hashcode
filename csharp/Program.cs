@@ -5,10 +5,12 @@ using System.Linq;
 namespace HashCode {
     class Program {
         static void Main(string[] args) {
-            Logger.Init(true);
-            Logger.Log("Reading initial data from {0}", args[0]);
+            var parameters = new Parameters(args);
 
-            var model = ImportModel(args[0]);
+            Logger.Init(parameters.Verbose);
+            Logger.Log($"Reading initial data from {parameters.InputFile}");
+
+            var model = ImportModel(parameters.InputFile);
 
             Logger.Log("Data read successfully. Configuring traffic lights.");
 
@@ -45,14 +47,14 @@ namespace HashCode {
             Logger.Log("Running simulation.");
             Logger.Divider();
             for (int timer = 0; timer <= model.Duration; timer++) {
-                Logger.Log("Timer is {0} >>>>>>>>>>>", timer);
+                Logger.Log($"Timer is {timer} >>>>>>>>>>>");
 
                 // deal with traffic lights
                 foreach (var intersection in model.Intersections) {
                     intersection.CarJustPassed = false;
-                    Logger.Log("Checking intersection {0}", intersection.Id);
+                    Logger.Log($"Checking intersection {intersection.Id}");
                     if (intersection.TrafficLights.Count == 0) {
-                        Logger.Log("Intersection {0} has no traffic lights - it's always Red", intersection.Id);
+                        Logger.Log($"Intersection {intersection.Id} has no traffic lights - it's always Red");
                         continue;
                     }
                     intersection.SwitchTrafficLight();
@@ -92,8 +94,7 @@ namespace HashCode {
             }
 
             Console.WriteLine("Simulation completed. Total score is {0}", model.Score);
-            ExportModel(model, args[0], args[1]);
-            // model.ExportSchedule(inputFileName: args[0], outputFolderName: args[1]);
+            ExportModel(model, parameters.InputFile, parameters.OutputFolder);
         }
 
         private static Model ImportModel(string fileName) {
