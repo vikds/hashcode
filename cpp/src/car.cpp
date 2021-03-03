@@ -12,7 +12,7 @@ Car::Car(const std::vector<Street*>& path)
     finish_time_(0),
     left_to_go_(0)
 {
-    min_required_time_ = 1;
+    min_required_time_ = 0;
     for (std::vector<Street*>::iterator it = path_.begin(); it != path_.end(); it++) {
         Street* street = *it;
         min_required_time_ += street->travel_time();
@@ -26,13 +26,14 @@ void Car::Tick(size_t time) {
     if (left_to_go_ > 0) {
         left_to_go_--;
     }
-    if (IsWaiting()) {
-        Street* street = path_[position_];
-        if (street->IsAllowedToTurn(this)) {
-            Turn(time);
-        } else {
-            street->TickCosts();
-        }
+    if (!IsWaiting()) {
+        return;
+    }
+    Street* street = path_[position_];
+    if (street->IsAllowedToTurn(this)) {
+        Turn(time);
+    } else {
+        street->TickCosts();
     }
 }
 
@@ -58,7 +59,7 @@ void Car::Turn(size_t time) {
         throw std::runtime_error(oss.str());
     }
     curr_street->cars.pop_front();
-    curr_street->ticked = true;
+    curr_street->car_passed = true;
     position_++;
     if (HasFinished()) {
         finish_time_ = time;
