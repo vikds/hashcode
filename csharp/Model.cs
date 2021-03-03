@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace HashCode {
     public class Model {
@@ -21,6 +23,25 @@ namespace HashCode {
         public Car[] Cars;
         public int Bonus;
         public int Score;
+
+        public string ExportSchedule() {
+            var sb = new StringBuilder();
+            var intersections = Intersections
+                    .Where(i => i.TrafficLights != null && i.TrafficLights.Count > 0)
+                    .ToArray();
+
+            sb.Append(intersections.Length.ToString());
+            foreach (var i in intersections) {
+                sb.AppendLine();
+                sb.AppendLine(i.Id.ToString());
+                sb.Append(i.TrafficLights.Count.ToString());
+                foreach (var t in i.TrafficLights) {
+                    sb.AppendLine();
+                    sb.Append($"{t.Street.Name} {t.GreenDuration}");
+                }
+            }
+            return sb.ToString();
+        }
     }
 
     public class Street {
