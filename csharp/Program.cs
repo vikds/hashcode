@@ -4,6 +4,8 @@ using System.Linq;
 
 namespace HashCode {
     class Program {
+        static readonly Random random = new();
+
         static void Main(string[] args) {
             var parameters = new Parameters(args);
 
@@ -12,13 +14,18 @@ namespace HashCode {
 
             var model = ImportModel(parameters.InputFile);
 
-            Model bestModel = new Model() {
+            var bestModel = new Model() {
                 Score = int.MinValue,
             };
             for (int i = 0; i < 10; i++) {
                 var freshModel = model.Clone();
+
+                var watch = System.Diagnostics.Stopwatch.StartNew();
                 RunSimulation(freshModel);
-                Console.WriteLine($"Simulation completed. Total score is {freshModel.Score}");
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
+
+                Console.WriteLine($"Simulation completed. Total score is {freshModel.Score}. Took {elapsedMs / 1000.0:#.##} seconds");
                 if (bestModel.Score < freshModel.Score) {
                     bestModel = freshModel;
                 }
@@ -89,24 +96,14 @@ namespace HashCode {
         }
 
         private static void GenerateTrafficLightsSchedule(Model model) {
-            model.Intersections[1].TrafficLights.Add(new TrafficLight() {
-                Street = model.Intersections[1].Incoming.Single(s => s.Name == "rue-d-athenes"),
-                GreenDuration = 2,
-            });
-            model.Intersections[1].TrafficLights.Add(new TrafficLight() {
-                Street = model.Intersections[1].Incoming.Single(s => s.Name == "rue-d-amsterdam"),
-                GreenDuration = 1,
-            });
-
-            model.Intersections[0].TrafficLights.Add(new TrafficLight() {
-                Street = model.Intersections[0].Incoming.Single(s => s.Name == "rue-de-londres"),
-                GreenDuration = 2,
-            });
-
-            model.Intersections[2].TrafficLights.Add(new TrafficLight() {
-                Street = model.Intersections[2].Incoming.Single(s => s.Name == "rue-de-moscou"),
-                GreenDuration = 1,
-            });
+            foreach (var i in model.Intersections) {
+                foreach (var s in i.Incoming) {
+                    i.TrafficLights.Add(new TrafficLight() {
+                        Street = s,
+                        GreenDuration = random.Next(1, 4),
+                    });
+                }
+            }
         }
 
         private static Model ImportModel(string fileName) {

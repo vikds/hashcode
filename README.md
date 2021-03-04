@@ -31,3 +31,51 @@ Usage: ./hashcode [-io] [-i input][-o output]
     6. F – Forever jammed: 1,342,639 points
 
     Total: 9,482,432 points
+    
+## Building C# code
+[.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) is required to build C# code located in `./csharp` folder. It's a completely separated version of the solution and not related in any way to a C++ code.
+
+To build on Linux
+```shell
+$ cd csharp
+$ dotnet publish ./HashCode.csproj \
+   --output ./bin \
+   --configuration Release \
+   --runtime linux-x64 \
+   -p:GenerateFullPaths=true \
+   -p:PublishReadyToRun=true \
+   -p:PublishSingleFile=true \
+   --self-contained false 
+```
+
+Usage:
+```shell
+$ ./bin/HashCode -i ../input/a.txt -o ./output
+```
+
+Required parameters: 
+- `-i|--input <input file>` - loads model from the specified file
+- `-o|--output <output folder>` - puts the result here
+
+Optional parameter:
+- `-v|--verbose` - prints detailed simulation steps 
+
+
+To simply compile and run C# code without publishing:
+```shell
+$ cd csharp
+$ dotnet run -i input.txt -o ./output
+```
+
+## C# results
+
+|   | Name | Score |
+| - | - | - |
+| 1 | A – An example | 2 000 |
+| 2 | B – By the ocean | 4 559  991 |
+| 3 | C – Checkmate | TBP |
+| 4 | D – Daily commute | TBP |
+| 5 | E – Etoile | TBP |
+| 6 | F – Forever jammed | TBP |
+
+Total: TBP
