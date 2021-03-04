@@ -4,6 +4,7 @@ using System.Text;
 
 namespace HashCode {
     public class Model {
+        public Model() { }
         public Model(int duration, int intersectionsNum, int streetsNum, int carsNum, int bonus) {
             Duration = duration;
             Bonus = bonus;
@@ -41,6 +42,37 @@ namespace HashCode {
                 }
             }
             return sb.ToString();
+        }
+
+        public Model Clone() {
+            var clone = new Model(
+                duration: Duration,
+                intersectionsNum: Intersections.Length,
+                streetsNum: Streets.Length,
+                carsNum: Cars.Length,
+                bonus: Bonus
+            );
+
+            for (var i = 0; i < clone.Streets.Length; i++) {
+                clone.Streets[i] = new Street() {
+                    StartsAt = clone.Intersections[Streets[i].StartsAt.Id],
+                    EndsAt = clone.Intersections[Streets[i].EndsAt.Id],
+                    Name = Streets[i].Name,
+                    Length = Streets[i].Length,
+                };
+                clone.Streets[i].StartsAt.Outcoming.Add(clone.Streets[i]);
+                clone.Streets[i].EndsAt.Incoming.Add(clone.Streets[i]);
+            }
+
+            for (var i = 0; i < clone.Cars.Length; i++) {
+                clone.Cars[i] = new Car() {
+                    Id = i,
+                    Route = Cars[i].Route
+                        .Select(s => clone.Streets.Single(ss => ss.Name == s.Name))
+                        .ToArray(),
+                };
+            }
+            return clone;
         }
     }
 
