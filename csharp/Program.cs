@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace HashCode {
     class Program {
@@ -10,27 +12,55 @@ namespace HashCode {
             var parameters = new Parameters(args);
 
             Logger.Init(parameters.Verbose);
-            Logger.Log($"Reading initial data from {parameters.InputFile}");
-
+            Console.WriteLine($"Reading initial data from {parameters.InputFile}");
             var model = ImportModel(parameters.InputFile);
+            Console.WriteLine($"Model is ready.\n\tStreets: {model.Streets.Length},\n\t" +
+                $"Intersetions: {model.Intersections.Length},\n\tCars: {model.Cars.Length},\n\tDuration:{model.Duration}");
 
             var bestModel = new Model() {
                 Score = int.MinValue,
             };
-            for (int i = 0; i < 10; i++) {
-                var freshModel = model.Clone();
 
-                var watch = System.Diagnostics.Stopwatch.StartNew();
-                RunSimulation(freshModel);
-                watch.Stop();
-                var elapsedMs = watch.ElapsedMilliseconds;
+            var lockObject = new object();
+            var totalWatch = Stopwatch.StartNew();
+            if (parameters.Parallel) {
+                var parallelOptions = parameters.ParallelSimulations > 0
+                    ? new ParallelOptions { MaxDegreeOfParallelism = parameters.ParallelSimulations }
+                    : new ParallelOptions();
+                Parallel.For(0, 10, parallelOptions, i => {
+                    Console.WriteLine($"Simulation {i + 1} started");
 
-                Console.WriteLine($"Simulation completed. Total score is {freshModel.Score}. Took {elapsedMs / 1000.0:#.##} seconds");
-                if (bestModel.Score < freshModel.Score) {
-                    bestModel = freshModel;
+                    var freshModel = model.Clone();
+
+                    var simulationWatch = Stopwatch.StartNew();
+                    RunSimulation(freshModel);
+                    simulationWatch.Stop();
+
+                    Console.WriteLine($"Simulation {i + 1} completed. Total score is {freshModel.Score}. Took {simulationWatch.ElapsedMilliseconds / 1000.0:#.##} seconds");
+                    lock (lockObject) {
+                        if (bestModel.Score < freshModel.Score) {
+                            bestModel = freshModel;
+                        }
+                    }
+                });
+            } else {
+                for (int i = 0; i < 10; i++) {
+                    Console.WriteLine($"Simulation {i + 1} started");
+
+                    var freshModel = model.Clone();
+
+                    var simulationWatch = Stopwatch.StartNew();
+                    RunSimulation(freshModel);
+                    simulationWatch.Stop();
+
+                    Console.WriteLine($"Simulation {i + 1} completed. Total score is {freshModel.Score}. Took {simulationWatch.ElapsedMilliseconds / 1000.0:#.##} seconds");
+                    if (bestModel.Score < freshModel.Score) {
+                        bestModel = freshModel;
+                    }
                 }
             }
-            Console.WriteLine($"Best score is {bestModel.Score}");
+            totalWatch.Stop();
+            Console.WriteLine($"Total time is {totalWatch.ElapsedMilliseconds / 1000.0:#.##} and the best score is {bestModel.Score}");
             ExportModel(bestModel, parameters.InputFile, parameters.OutputFolder);
         }
 
@@ -132,6 +162,7 @@ namespace HashCode {
                         Name = l[2],
                         Length = int.Parse(l[3]),
                     };
+                    model.StreetMap[model.Streets[i].Name] = model.Streets[i];
                     model.Streets[i].StartsAt.Outcoming.Add(model.Streets[i]);
                     model.Streets[i].EndsAt.Incoming.Add(model.Streets[i]);
                 }
@@ -144,7 +175,7 @@ namespace HashCode {
                         Id = i,
                         Route = l
                             .Skip(1)
-                            .Select(s => model.Streets.Single(ss => ss.Name == s))
+                            .Select(s => model.StreetMap[s])
                             .ToArray(),
                     };
                 }
