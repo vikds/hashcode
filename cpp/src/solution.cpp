@@ -51,11 +51,11 @@ TrafficSignaling Solution::GetBestTrafficSignaling() {
     std::cout << "Initial signaling bonus: " << max_bonus << std::endl;
     for (size_t attempt = 0; attempt < attempts_; attempt++) {
         std::vector<TrafficLight>& traffic_lights = signaling.traffic_lights;
-        TrafficLight* traffic_light = GetMaxCarsJammedTrafficLight(traffic_lights);
+        TrafficLight* traffic_light = GetAvgCarsJammedTrafficLight(traffic_lights);
         if (!traffic_light) {
             break;
         }
-        OpenMaxCarsJammedStreet(*traffic_light);
+        OpenAvgCarsJammedStreet(*traffic_light);
         size_t bonus = simulator.Run(signaling);
         std::cout << "Intermediate signaling bonus: " << bonus << std::endl;
         if (bonus > max_bonus) {
