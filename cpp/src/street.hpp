@@ -28,11 +28,16 @@ public:
 
     bool IsAllowedToTurn(Car* car) const;
 
+    double GetAvgCarsJammed(size_t duration) const;
+
     void TickLoss();
 
 public: // resetable
     std::deque<Car*> cars;
     size_t cars_expected;
+    size_t cars_jammed;
+    size_t cars_jammed_sum;
+    size_t max_cars_jammed;
     size_t time_wasted;
     bool car_passed;
     bool is_green;

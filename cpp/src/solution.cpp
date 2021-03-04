@@ -26,6 +26,23 @@ bool SortByCarExpectedDesc(const StreetLight& lhs, const StreetLight& rhs) {
     return lhs.street->cars_expected > rhs.street->cars_expected;
 }
 
+bool SortByMaxCarsJammedDesc(const StreetLight& lhs, const StreetLight& rhs) {
+    return lhs.street->max_cars_jammed > rhs.street->max_cars_jammed;
+}
+
+struct SortByAvgCarsJammedDesc {
+    SortByAvgCarsJammedDesc(size_t duration)
+      : duration_(duration)
+    {}
+
+    bool operator()(const StreetLight& lhs, const StreetLight& rhs) {
+        return lhs.street->GetAvgCarsJammed(duration_) < rhs.street->GetAvgCarsJammed(duration_);
+    }
+
+private:
+    size_t duration_;
+};
+
 TrafficSignaling Solution::GetBestTrafficSignaling() {
     Simulator simulator(model_);
     TrafficSignaling signaling = InitializeWithCarsExpected();
@@ -34,18 +51,11 @@ TrafficSignaling Solution::GetBestTrafficSignaling() {
     std::cout << "Initial signaling bonus: " << max_bonus << std::endl;
     for (size_t attempt = 0; attempt < attempts_; attempt++) {
         std::vector<TrafficLight>& traffic_lights = signaling.traffic_lights;
-        size_t max_time_wasted = 0;
-        for (std::vector<TrafficLight>::iterator traffic_light = traffic_lights.begin(); traffic_light != traffic_lights.end(); traffic_light++) {
-            max_time_wasted = std::max(max_time_wasted, traffic_light->intersection().time_wasted);
-        }
-        if (max_time_wasted == 0) {
+        TrafficLight* traffic_light = GetMaxCarsJammedTrafficLight(traffic_lights);
+        if (!traffic_light) {
             break;
         }
-        for (std::vector<TrafficLight>::iterator traffic_light = traffic_lights.begin(); traffic_light != traffic_lights.end(); traffic_light++) {
-            if (traffic_light->intersection().time_wasted == max_time_wasted) {
-                ChangeTrafficLightSchedule(*traffic_light);
-            }
-        }
+        OpenMaxCarsJammedStreet(*traffic_light);
         size_t bonus = simulator.Run(signaling);
         std::cout << "Intermediate signaling bonus: " << bonus << std::endl;
         if (bonus > max_bonus) {
@@ -58,21 +68,73 @@ TrafficSignaling Solution::GetBestTrafficSignaling() {
     return best_signaling;
 }
 
-bool Solution::ChangeTrafficLightSchedule(TrafficLight& traffic_light) {
-    size_t max_time_wasted = 0;
+TrafficLight* Solution::GetMaxCarsJammedTrafficLight(std::vector<TrafficLight>& traffic_lights) {
+    size_t max_cars_jammed = 0;
+    for (std::vector<TrafficLight>::iterator traffic_light = traffic_lights.begin(); traffic_light != traffic_lights.end(); traffic_light++) {
+        max_cars_jammed = std::max(max_cars_jammed, traffic_light->intersection().max_cars_jammed);
+    }
+    if (max_cars_jammed == 0) {
+        return nullptr;
+    }
+    for (std::vector<TrafficLight>::iterator traffic_light = traffic_lights.begin(); traffic_light != traffic_lights.end(); traffic_light++) {
+        if (traffic_light->intersection().max_cars_jammed == max_cars_jammed) {
+            return &*traffic_light;
+        }
+    }
+    return nullptr;
+}
+
+TrafficLight* Solution::GetAvgCarsJammedTrafficLight(std::vector<TrafficLight>& traffic_lights) {
+    double max_cars_jammed = 0;
+    for (std::vector<TrafficLight>::iterator traffic_light = traffic_lights.begin(); traffic_light != traffic_lights.end(); traffic_light++) {
+        max_cars_jammed = std::max(max_cars_jammed, traffic_light->intersection().GetAvgCarsJammed(model_.simulation_time()));
+    }
+    if (max_cars_jammed == 0.f) {
+        return nullptr;
+    }
+    for (std::vector<TrafficLight>::iterator traffic_light = traffic_lights.begin(); traffic_light != traffic_lights.end(); traffic_light++) {
+        if (traffic_light->intersection().GetAvgCarsJammed(model_.simulation_time()) == max_cars_jammed) {
+            return &*traffic_light;
+        }
+    }
+    return nullptr;
+}
+
+bool Solution::OpenAvgCarsJammedStreet(TrafficLight& traffic_light) {
+    double max_cars_jammed = 0;
     Schedule& schedule = traffic_light.schedule();
     for (Schedule::iterator street_light = schedule.begin(); street_light != schedule.end(); street_light++) {
-        max_time_wasted = std::max(max_time_wasted, street_light->street->time_wasted);
+        max_cars_jammed = std::max(max_cars_jammed, street_light->street->GetAvgCarsJammed(model_.simulation_time()));
     }
-    if (max_time_wasted == 0) {
+    if (max_cars_jammed == 0) {
         return false;
     }
     for (Schedule::iterator street_light = schedule.begin(); street_light != schedule.end(); street_light++) {
-        if (street_light->street->time_wasted == max_time_wasted) {
+        if (street_light->street->GetAvgCarsJammed(model_.simulation_time()) == max_cars_jammed) {
             street_light->duration++;
+            break;
         }
     }
-    std::sort(schedule.begin(), schedule.end(), SortByDurationDesc);
+    std::sort(schedule.begin(), schedule.end(), SortByAvgCarsJammedDesc(model_.simulation_time()));
+    return true;
+}
+
+bool Solution::OpenMaxCarsJammedStreet(TrafficLight& traffic_light) {
+    size_t max_cars_jammed = 0;
+    Schedule& schedule = traffic_light.schedule();
+    for (Schedule::iterator street_light = schedule.begin(); street_light != schedule.end(); street_light++) {
+        max_cars_jammed = std::max(max_cars_jammed, street_light->street->max_cars_jammed);
+    }
+    if (max_cars_jammed == 0) {
+        return false;
+    }
+    for (Schedule::iterator street_light = schedule.begin(); street_light != schedule.end(); street_light++) {
+        if (street_light->street->max_cars_jammed == max_cars_jammed) {
+            street_light->duration++;
+            break;
+        }
+    }
+    std::sort(schedule.begin(), schedule.end(), SortByMaxCarsJammedDesc);
     return true;
 }
 
@@ -100,10 +162,6 @@ TrafficSignaling Solution::InitializeWithCarsExpected() {
     TrafficSignaling signaling;
     for (std::vector<Intersection>::iterator is = model_.intersections().begin(); is != model_.intersections().end(); is++) {
         Intersection& intersection = *is;
-        Street* street = intersection.GetMaxCarExpectedStreet();
-        if (!street) {
-            continue;
-        }
         Schedule schedule;
         for (std::vector<Street*>::iterator it = intersection.incoming.begin(); it != intersection.incoming.end(); it++) {
             Street* street = *it;

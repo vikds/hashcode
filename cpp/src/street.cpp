@@ -8,6 +8,9 @@ namespace hashcode
 
 Street::Street(const std::string& name, size_t travel_time, Intersection& intersection)
   : cars_expected(0),
+    cars_jammed(0),
+    cars_jammed_sum(0),
+    max_cars_jammed(0),
     time_wasted(0),
     car_passed(false),
     is_green(false),
@@ -18,11 +21,17 @@ Street::Street(const std::string& name, size_t travel_time, Intersection& inters
 
 void Street::Tick(size_t time) {
     car_passed = false;
+    cars_jammed_sum += cars_jammed;
+    max_cars_jammed = std::max(max_cars_jammed, cars_jammed);
+    cars_jammed = 0;
 }
 
 void Street::Reset() {
     cars.clear();
     cars_expected = 0;
+    cars_jammed = 0;
+    cars_jammed_sum = 0;
+    max_cars_jammed = 0;
     time_wasted = 0;
     car_passed = false;
     is_green = false;
@@ -40,8 +49,13 @@ bool Street::IsAllowedToTurn(Car* car) const {
     return car == cars.front();
 }
 
+double Street::GetAvgCarsJammed(size_t duration) const {
+    return static_cast<double>(cars_jammed_sum) / duration;
+}
+
 void Street::TickLoss() {
-    intersection_.time_wasted++;
+    intersection_.cars_jammed++;
+    cars_jammed++;
     time_wasted++;
 }
 
