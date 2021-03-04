@@ -11,13 +11,7 @@ Car::Car(const std::vector<Street*>& path)
     position_(0),
     finish_time_(0),
     left_to_go_(0)
-{
-    min_required_time_ = 0;
-    for (std::vector<Street*>::iterator it = path_.begin(); it != path_.end(); it++) {
-        Street* street = *it;
-        min_required_time_ += street->travel_time();
-    }
-}
+{}
 
 void Car::Tick(size_t time) {
     if (HasFinished()) {
@@ -33,7 +27,7 @@ void Car::Tick(size_t time) {
     if (street->IsAllowedToTurn(this)) {
         Turn(time);
     } else {
-        street->TickCosts();
+        street->TickLoss();
     }
 }
 

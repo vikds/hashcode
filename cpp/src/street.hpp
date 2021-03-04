@@ -24,9 +24,11 @@ public:
 public:
     void Reset();
 
+    void Tick(size_t);
+
     bool IsAllowedToTurn(Car* car) const;
 
-    void TickCosts();
+    void TickLoss();
 
 public: // resetable
     std::deque<Car*> cars;

@@ -16,6 +16,10 @@ Street::Street(const std::string& name, size_t travel_time, Intersection& inters
     intersection_(intersection)
 {}
 
+void Street::Tick(size_t time) {
+    car_passed = false;
+}
+
 void Street::Reset() {
     cars.clear();
     cars_expected = 0;
@@ -36,7 +40,7 @@ bool Street::IsAllowedToTurn(Car* car) const {
     return car == cars.front();
 }
 
-void Street::TickCosts() {
+void Street::TickLoss() {
     intersection_.time_wasted++;
     time_wasted++;
 }

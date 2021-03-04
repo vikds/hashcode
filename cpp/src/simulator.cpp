@@ -24,7 +24,10 @@ size_t Simulator::Run(TrafficSignaling& signaling) {
             traffic_light->Tick(time);
         }
         for (std::vector<Street>::iterator street = model_.streets().begin(); street != model_.streets().end(); street++) {
-            street->car_passed = false;
+            street->Tick(time);
+        }
+        for (std::vector<Intersection>::iterator is = model_.intersections().begin(); is != model_.intersections().end(); is++) {
+            is->Tick(time);
         }
     }
     size_t score = 0;

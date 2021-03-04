@@ -15,9 +15,6 @@ public:
     size_t left_to_go() const {
         return left_to_go_;
     }
-    size_t min_required_time() const {
-        return min_required_time_;
-    }
     std::vector<Street*>& path() {
         return path_;
     }
@@ -34,7 +31,6 @@ private:
 
 private:
     std::vector<Street*> path_;
-    size_t min_required_time_;
 
 private: // resetable
     size_t position_;

@@ -14,7 +14,11 @@ public:
     }
 
 public:
+    void Tick(size_t time);
+
     void Reset();
+
+    Street* GetMaxCarExpectedStreet();
 
 public:
     std::vector<Street*> incoming;

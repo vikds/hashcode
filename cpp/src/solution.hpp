@@ -13,7 +13,7 @@ public:
 
 private:
     bool ChangeTrafficLightSchedule(TrafficLight& traffic_light);
-    void CountExpectedCarsOnTheStreets();
+    void CountCarsExpectedOnTheStreets();
     TrafficSignaling InitializeWithCarsExpected();
     
 private:
