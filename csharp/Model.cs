@@ -12,6 +12,8 @@ namespace HashCode {
             for (int i = 0; i < Intersections.Length; i++) {
                 Intersections[i] = new Intersection() {
                     Id = i,
+                    Incoming = new List<Street>(streetsNum),
+                    Outcoming = new List<Street>(streetsNum),
                 };
             }
             Streets = new Street[streetsNum];
@@ -21,6 +23,7 @@ namespace HashCode {
         public int Duration;
         public Intersection[] Intersections;
         public Street[] Streets;
+        public Dictionary<string, Street> StreetMap = new();
         public Car[] Cars;
         public int Bonus;
         public int Score;
@@ -31,11 +34,11 @@ namespace HashCode {
                     .Where(i => i.TrafficLights != null && i.TrafficLights.Count > 0)
                     .ToArray();
 
-            sb.Append(intersections.Length.ToString());
+            sb.Append(intersections.Length);
             foreach (var i in intersections) {
                 sb.AppendLine();
                 sb.AppendLine(i.Id.ToString());
-                sb.Append(i.TrafficLights.Count.ToString());
+                sb.Append(i.TrafficLights.Count);
                 foreach (var t in i.TrafficLights) {
                     sb.AppendLine();
                     sb.Append($"{t.Street.Name} {t.GreenDuration}");
@@ -60,6 +63,7 @@ namespace HashCode {
                     Name = Streets[i].Name,
                     Length = Streets[i].Length,
                 };
+                clone.StreetMap[clone.Streets[i].Name] = clone.Streets[i];
                 clone.Streets[i].StartsAt.Outcoming.Add(clone.Streets[i]);
                 clone.Streets[i].EndsAt.Incoming.Add(clone.Streets[i]);
             }
@@ -68,7 +72,7 @@ namespace HashCode {
                 clone.Cars[i] = new Car() {
                     Id = i,
                     Route = Cars[i].Route
-                        .Select(s => clone.Streets.Single(ss => ss.Name == s.Name))
+                        .Select(s => clone.StreetMap[s.Name])
                         .ToArray(),
                 };
             }
@@ -88,10 +92,10 @@ namespace HashCode {
 
     public class Intersection {
         public int Id;
-        public List<Street> Incoming = new List<Street>();
-        public List<Street> Outcoming = new List<Street>();
+        public List<Street> Incoming = new();
+        public List<Street> Outcoming = new();
 
-        public List<TrafficLight> TrafficLights = new List<TrafficLight>();
+        public List<TrafficLight> TrafficLights = new();
 
         public bool CarJustPassed = false;
 
