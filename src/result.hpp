@@ -7,14 +7,12 @@
 namespace hashcode
 {
 
-class TrafficSignaling {
-public:
-    size_t scheduled_traffic_lights() const;
-
+class Result {
 public:
     void SaveToFile(const std::string& file_name);
 
-    void Reset();
+private:
+    size_t CountScheduledTrafficLights() const;
 
 public:
     std::vector<TrafficLight> traffic_lights;

@@ -27,7 +27,6 @@ ModelData::ModelData(const std::string& file_name) {
     std::string name;
     size_t travel_time;
     size_t intersection_id;
-    streets.reserve(streets_num);
     std::unordered_map<std::string, size_t> street_name_2_id;
     for (size_t id = 0; id < streets_num; id++) {
         input >> intersection_id; // begin
@@ -40,7 +39,6 @@ ModelData::ModelData(const std::string& file_name) {
     }
 
     size_t length;
-    cars.reserve(cars_num);
     std::vector<size_t> path;
     for (size_t id = 0; id < cars_num; id++) {
         path.clear();
@@ -72,7 +70,6 @@ Model::Model(const ModelData& data)
     std::vector<Street*> path;
     cars.reserve(data_.cars_num);
     for (const ModelData::Car& car : data_.cars) {
-        path.clear();
         for (const size_t& street_id : car.path) {
             path.push_back(&streets[street_id]);
         }

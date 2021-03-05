@@ -7,11 +7,11 @@ set(SOURCES
     src/intersection.cpp
     src/main.cpp
     src/model.cpp
+    src/result.cpp
     src/simulator.cpp
     src/solution.cpp
     src/street.cpp
     src/traffic_light.cpp
-    src/traffic_signaling.cpp
 )
 
 add_executable(hashcode ${SOURCES})
