@@ -16,25 +16,27 @@ class TrafficLight {
 public:
     TrafficLight(Intersection* intersection, const Schedule& schedule);
 
-    Intersection& intersection() {
+    Intersection& intersection() const {
         return *intersection_;
     }
     Schedule& schedule() {
         return schedule_;
     }
+    size_t scheduled_streets() const;
 
 public:
-    void Tick(size_t time);
-
     void Reset();
+    void Tick();
 
 private:
-    void Switch();
+    StreetLight& GetNextScheduledStreet();
+    void Switch(StreetLight& curr_street_light);
 
 private:
     Intersection* intersection_;
     Schedule schedule_;
     size_t direction_;
+    size_t scheduled_streets_;
     size_t tick_;
 };
 

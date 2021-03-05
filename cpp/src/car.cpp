@@ -13,6 +13,12 @@ Car::Car(const std::vector<Street*>& path)
     left_to_go_(0)
 {}
 
+void Car::Reset() {
+    position_ = 0;
+    finish_time_ = 0;
+    left_to_go_ = 0;
+}
+
 void Car::Tick(size_t time) {
     if (HasFinished()) {
         return;
@@ -29,12 +35,6 @@ void Car::Tick(size_t time) {
     } else {
         street->TickLoss();
     }
-}
-
-void Car::Reset() {
-    position_ = 0;
-    finish_time_ = 0;
-    left_to_go_ = 0;
 }
 
 bool Car::HasFinished() const {

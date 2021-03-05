@@ -12,22 +12,20 @@ Simulator::Simulator(Model& model)
   : model_(model)
 {}
 
-size_t Simulator::Run(TrafficSignaling& signaling) {
+size_t Simulator::Run(std::vector<TrafficLight>& traffic_lights) {
     model_.Reset();
-    signaling.Reset();
+    for (std::vector<TrafficLight>::iterator traffic_light = traffic_lights.begin(); traffic_light != traffic_lights.end(); traffic_light++) {
+        traffic_light->Reset();
+    }
     for (size_t time = 0; time <= model_.simulation_time(); time++) {
         for (std::vector<Car>::iterator car = model_.cars().begin(); car != model_.cars().end(); car++) {
             car->Tick(time);
         }
-        std::vector<TrafficLight>& traffic_lights = signaling.traffic_lights;
         for (std::vector<TrafficLight>::iterator traffic_light = traffic_lights.begin(); traffic_light != traffic_lights.end(); traffic_light++) {
-            traffic_light->Tick(time);
+            traffic_light->Tick();
         }
         for (std::vector<Street>::iterator street = model_.streets().begin(); street != model_.streets().end(); street++) {
-            street->Tick(time);
-        }
-        for (std::vector<Intersection>::iterator is = model_.intersections().begin(); is != model_.intersections().end(); is++) {
-            is->Tick(time);
+            street->Tick();
         }
     }
     size_t score = 0;

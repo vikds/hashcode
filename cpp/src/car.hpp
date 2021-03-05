@@ -20,9 +20,8 @@ public:
     }
 
 public:
-    void Tick(size_t time);
     void Reset();
-
+    void Tick(size_t time);
     bool HasFinished() const;
     bool IsWaiting() const;
 

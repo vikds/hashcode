@@ -9,7 +9,7 @@ class Simulator {
 public:
     Simulator(Model& model);
 
-    size_t Run(TrafficSignaling& traffic_signaling);
+    size_t Run(std::vector<TrafficLight>& traffic_lights);
 
 private:
     Model& model_;

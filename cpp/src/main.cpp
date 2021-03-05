@@ -1,6 +1,7 @@
 #include <getopt.h>
-#include <sysexits.h>
 #include <filesystem>
+#include <sysexits.h>
+#include <unistd.h>
 
 #include "fwd.hpp"
 #include "model.hpp"

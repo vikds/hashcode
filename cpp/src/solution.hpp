@@ -12,10 +12,8 @@ public:
     TrafficSignaling GetBestTrafficSignaling();
 
 private:
-    TrafficLight* GetMaxCarsJammedTrafficLight(std::vector<TrafficLight>& traffic_lights);
-    TrafficLight* GetAvgCarsJammedTrafficLight(std::vector<TrafficLight>& traffic_lights);
-    bool OpenAvgCarsJammedStreet(TrafficLight& traffic_light);
-    bool OpenMaxCarsJammedStreet(TrafficLight& traffic_light);
+    TrafficLight* GetMaxTimeWastedTrafficLight(std::vector<TrafficLight>& traffic_lights, size_t index);
+    bool ExtendMaxTimeWastedStreet(TrafficLight& traffic_light);
     void CountCarsExpectedOnTheStreets();
     TrafficSignaling InitializeWithCarsExpected();
     

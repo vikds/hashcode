@@ -18,48 +18,57 @@ TrafficLight::TrafficLight(Intersection* intersection, const Schedule& schedule)
     direction_(0),
     tick_(0)
 {
-    if (schedule_.empty()) {
-        return;
+    Reset();
+}
+
+size_t TrafficLight::scheduled_streets() const {
+    size_t result = 0;
+    for (Schedule::const_iterator street_light = schedule_.begin(); street_light != schedule_.end(); street_light++) {
+        if (street_light->duration > 0) {
+            result++;
+        }
     }
-    StreetLight& street_light = schedule_.front();
-    if (street_light.duration > 0) {
-        street_light.street->is_green = true;
-    }
+    return result;
 }
 
 void TrafficLight::Reset() {
-    for (Schedule::iterator street_light = schedule_.begin(); street_light != schedule_.end();) {
-        if (street_light->duration == 0) {
-            street_light = schedule_.erase(street_light);
-        } else {
-            street_light->street->is_green = false;
-            street_light++;
-        }
-    }
-    if (schedule_.empty()) {
-        return;
-    }
-    StreetLight& street_light = schedule_.front();
-    street_light.street->is_green = true;
     direction_ = 0;
     tick_ = 0;
-}
-
-void TrafficLight::Tick(size_t time) {
-    if (schedule_.size() <= 1) {
+    scheduled_streets_ = scheduled_streets();
+    if (scheduled_streets_ == 0) {
         return;
     }
-    StreetLight& street_light = schedule_[direction_];
+    StreetLight& street_light = GetNextScheduledStreet();
+    street_light.street->is_green = true;
+}
+
+void TrafficLight::Tick() {
+    if (scheduled_streets_ <= 1) {
+        return;
+    }
+    StreetLight& street_light = GetNextScheduledStreet();
     if (++tick_ == street_light.duration) {
-        Switch();
+        Switch(street_light);
     }
 }
 
-void TrafficLight::Switch() {
-    StreetLight& curr_street_light = schedule_[direction_];
+StreetLight& TrafficLight::GetNextScheduledStreet() {
+    for (size_t i = 0; i < schedule_.size(); i++) {
+        StreetLight& street_light = schedule_[direction_];
+        if (street_light.duration > 0) {
+            return street_light;
+        }
+        direction_ = (direction_ + 1) % schedule_.size();
+    }
+    std::ostringstream oss;
+    oss << "At least one street light is expected to be scheduled at intersection: " << intersection().id();
+    throw std::runtime_error(oss.str());
+}
+
+void TrafficLight::Switch(StreetLight& curr_street_light) {
     curr_street_light.street->is_green = false;
     direction_ = (direction_ + 1) % schedule_.size();
-    StreetLight& next_street_light = schedule_[direction_];
+    StreetLight& next_street_light = GetNextScheduledStreet();
     next_street_light.street->is_green = true;
     tick_ = 0;
 }

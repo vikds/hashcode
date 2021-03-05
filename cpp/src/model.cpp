@@ -31,23 +31,21 @@ void Model::LoadFromFile(const std::string& file_name) {
         intersections_.push_back(Intersection(id));
     }
 
-    size_t beg_is_id;
-    size_t end_is_id;
     std::string name;
     size_t travel_time;
+    size_t beg_intersection_id;
+    size_t end_intersection_id;
     std::unordered_map<std::string, size_t> street_name_2_id;
     streets_.reserve(streets);
     for (size_t id = 0; id < streets; id++) {
-        input >> beg_is_id;
-        input >> end_is_id;
+        input >> beg_intersection_id;
+        input >> end_intersection_id;
         input >> name;
         input >> travel_time;
 
-        Intersection& beg_intersection = intersections_[beg_is_id];
-        Intersection& end_intersection = intersections_[end_is_id];
-        streets_.push_back(Street(name, travel_time, end_intersection));
-        beg_intersection.outgoing.push_back(&streets_.back());
-        end_intersection.incoming.push_back(&streets_.back());
+        Intersection& intersection = intersections_[end_intersection_id];
+        streets_.push_back(Street(name, travel_time, intersection));
+        intersection.streets.push_back(&streets_.back());
         street_name_2_id[name] = id;
     }
 
