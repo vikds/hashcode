@@ -9,22 +9,25 @@
 namespace hashcode
 {
 
-Simulator::Simulator(Model& model)
-  : model_(model)
-{}
-
 struct CarsOnStreetOrExpectedGreater {
+    CarsOnStreetOrExpectedGreater(const Model& model)
+      : model_(model)
+    {}
+
     bool operator()(const StreetLight& lhs, const StreetLight& rhs) {
         if (lhs.street->cars.size() == rhs.street->cars.size()) {
             return lhs.street->cars_expected > rhs.street->cars_expected;
         }
         return lhs.street->cars.size() > rhs.street->cars.size();
     }
+
+private:
+    const Model& model_;
 };
 
-void Simulator::InitializeWithCarsExpected(std::vector<TrafficLight>& traffic_lights) {
-    model_.CountCarsExpectedOnTheStreets();
-    for (Intersection& intersection : model_.intersections) {
+void Simulator::InitializeTrafficLights(Model& model, std::vector<TrafficLight>& traffic_lights) {
+    model.CountCarsExpectedOnTheStreets();
+    for (Intersection& intersection : model.intersections) {
         Schedule schedule;
         for (Street* street : intersection.streets) {
             if (street->cars_expected == 0) {
@@ -35,34 +38,34 @@ void Simulator::InitializeWithCarsExpected(std::vector<TrafficLight>& traffic_li
         if (schedule.empty()) {
             continue;
         }
-        std::sort(schedule.begin(), schedule.end(), CarsOnStreetOrExpectedGreater());
+        std::sort(schedule.begin(), schedule.end(), CarsOnStreetOrExpectedGreater(model));
         TrafficLight traffic_light(intersection, schedule);
         traffic_lights.push_back(traffic_light);
     }
 }
 
-size_t Simulator::Run(std::vector<TrafficLight>& traffic_lights) {
-    model_.Reset();
+size_t Simulator::Run(Model& model, std::vector<TrafficLight>& traffic_lights) {
+    model.Reset();
     for (TrafficLight& traffic_light : traffic_lights) {
         traffic_light.Reset();
     }
-    for (size_t time = 0; time <= model_.simulation_time(); time++) {
-        for (Car& car : model_.cars) {
+    for (size_t time = 0; time <= model.simulation_time(); time++) {
+        for (Car& car : model.cars) {
             car.Tick(time);
         }
         for (TrafficLight& traffic_light : traffic_lights) {
             traffic_light.Tick();
         }
-        for (Street& street : model_.streets) {
+        for (Street& street : model.streets) {
             street.Tick();
         }
     }
     size_t score = 0;
-    for (Car& car : model_.cars) {
+    for (Car& car : model.cars) {
         if (!car.has_finished()) {
             continue;
         }
-        size_t bonus = model_.finish_bonus() + (model_.simulation_time() - car.finish_time());
+        size_t bonus = model.finish_bonus() + (model.simulation_time() - car.finish_time());
         score += bonus;
     }
     return score;

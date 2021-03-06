@@ -18,15 +18,14 @@ Solution::Solution(Model& model, size_t attempts)
 {}
 
 Result Solution::GetBestResult() {
-    Simulator simulator(model_);
     size_t bonus;
     size_t max_bonus = 0;
     Result curr;
     Result best;
-    simulator.InitializeWithCarsExpected(best.traffic_lights);
+    Simulator::InitializeTrafficLights(model_, best.traffic_lights);
     for (size_t attempt = 0; attempt < attempts_; attempt++) {
         curr = best;
-        max_bonus = simulator.Run(curr.traffic_lights);
+        max_bonus = Simulator::Run(model_, curr.traffic_lights);
         std::cout << "Current traffic signaling bonus: " << max_bonus << std::endl;
         TrafficLight* traffic_light = GetMaxTimeWastedTrafficLight(curr.traffic_lights, attempt);
         if (!traffic_light) {
@@ -37,7 +36,7 @@ Result Solution::GetBestResult() {
         Schedule& schedule = traffic_light->schedule;
         for (size_t rotation = 0; rotation < schedule.size(); rotation++) {
             std::rotate(schedule.begin(), schedule.begin() + 1, schedule.end());
-            bonus = simulator.Run(curr.traffic_lights);
+            bonus = Simulator::Run(model_, curr.traffic_lights);
             if (bonus > max_bonus) {
                 best = curr;
                 max_bonus = bonus;
@@ -49,7 +48,7 @@ Result Solution::GetBestResult() {
             continue;
         }
         ExtendMaxTimeWastedStreet(*traffic_light);
-        bonus = simulator.Run(curr.traffic_lights);
+        bonus = Simulator::Run(model_, curr.traffic_lights);
         if (bonus > max_bonus) {
             best = curr;
             max_bonus = bonus;

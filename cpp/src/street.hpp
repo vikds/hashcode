@@ -9,10 +9,10 @@ namespace hashcode
 
 class Street {
 public:
-    Street(Intersection& intersection, const std::string& name, size_t travel_time);
+    Street(size_t id, Intersection& intersection, size_t travel_time);
 
-    const std::string& name() const {
-        return name_;
+    size_t id() const {
+        return id_;
     }
     size_t travel_time() const {
         return travel_time_;
@@ -25,7 +25,6 @@ public:
     bool IsAllowedToTurn(Car* car) const;
 
 public:
-    Intersection& intersection;
     std::deque<Car*> cars;
     size_t cars_expected = 0;
     size_t time_wasted = 0;
@@ -33,7 +32,8 @@ public:
     bool is_green = false;
 
 private:
-    const std::string& name_;
+    size_t id_;
+    Intersection& intersection_;
     size_t travel_time_;
 };
 

@@ -6,14 +6,10 @@
 namespace hashcode
 {
 
-Street::Street(Intersection& intersection, const std::string& name, size_t travel_time)
-  : intersection(intersection),
-    name_(name),
-    travel_time_(travel_time),
-    cars_expected(0),
-    time_wasted(0),
-    car_passed(false),
-    is_green(false)
+Street::Street(size_t id, Intersection& intersection, size_t travel_time)
+  : id_(id),
+    intersection_(intersection),
+    travel_time_(travel_time)
 {}
 
 void Street::Reset() {
@@ -29,7 +25,7 @@ void Street::Tick() {
 }
 
 void Street::AddTimeWasted() {
-    intersection.time_wasted++;
+    intersection_.time_wasted++;
     time_wasted++;
 }
 

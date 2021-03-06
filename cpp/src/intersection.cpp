@@ -7,8 +7,7 @@ namespace hashcode
 {
 
 Intersection::Intersection(size_t id)
-  : id_(id),
-    time_wasted(0)  
+  : id_(id)
 {}
 
 void Intersection::Reset() {

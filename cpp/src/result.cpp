@@ -23,7 +23,7 @@ void Result::SaveToFile(const std::string& file_name) {
             if (street_light.duration == 0) {
                 continue;
             }
-            output << street_light.street->name() << " " << street_light.duration << std::endl;
+            // output << street_light.street->name() << " " << street_light.duration << std::endl;
         }
     }
 }

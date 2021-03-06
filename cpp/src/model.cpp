@@ -62,13 +62,13 @@ Model::Model(const ModelData& data)
     }
 
     streets.reserve(data_.streets_num);
-    for (const ModelData::Street& street : data_.streets) {
+    for (size_t id = 0; id < data_.streets_num; id++) {
+        const ModelData::Street& street = data_.streets[id];
         Intersection& intersection = intersections[street.intersection_id];
-        streets.push_back(Street(intersection, street.name, street.travel_time));
+        streets.push_back(Street(id, intersection, street.travel_time));
         intersection.streets.push_back(&streets.back());
     }
 
-    size_t locations;
     std::vector<Street*> path;
     cars.reserve(data_.cars_num);
     for (const ModelData::Car& car : data_.cars) {
@@ -105,7 +105,7 @@ void Model::InitCarsOnStreets() {
 void Model::CountCarsExpectedOnTheStreets() {
     InitCarsOnStreets();
 
-    for (Car& car : cars) {
+    for (const Car& car : cars) {
         size_t travel_time = 0;
         for (auto it = car.path().begin(); it != car.path().end(); it++) {
             if (travel_time > simulation_time()) {
