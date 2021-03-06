@@ -20,6 +20,7 @@ namespace HashCode {
             Cars = new Car[carsNum];
 
         }
+
         public int Duration;
         public Intersection[] Intersections;
         public Street[] Streets;
@@ -132,6 +133,7 @@ namespace HashCode {
     public partial class TrafficLight {
         public Street Street;
         public int GreenDuration;
+
         public Colors State = Colors.Red;
         public int GreenSecondsLeft;
 
@@ -162,18 +164,19 @@ namespace HashCode {
         }
 
         public void Move() {
+            if (Route.Length == 0) return;
             if (LeftOnCurrentStreet > 0) {
                 LeftOnCurrentStreet--;
             } else { // if (leftOnCurrentStreet == 0)
                 if (CurrentStreet.EndsAt.CarJustPassed) {
-                    Logger.Log(
+                    Logger.Debug(
                         "Car {0} is waiting in the line at intersection {1}",
                         Id,
                         CurrentStreet.EndsAt.Id
                     );
                 } else if (CurrentStreet.TrafficLight != null
                         && CurrentStreet.TrafficLight.State == TrafficLight.Colors.Red) {
-                    Logger.Log(
+                    Logger.Debug(
                         "Car {0} is waiting for green light at intersection {1}",
                         Id,
                         CurrentStreet.EndsAt.Id
@@ -183,7 +186,7 @@ namespace HashCode {
                         && (CurrentStreet.TrafficLight == null
                         || CurrentStreet.TrafficLight.State == TrafficLight.Colors.Green)) {
                     if (++currentStreetIndex >= Route.Length) {
-                        Logger.Log("Car {0} successfully finished", Id);
+                        Logger.Debug("Car {0} successfully finished", Id);
                         Finished = true;
                     } else {
                         CurrentStreet.StartsAt.CarJustPassed = true;
