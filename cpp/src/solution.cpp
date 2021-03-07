@@ -28,13 +28,13 @@ Signaling Solution::GetBestSignaling() {
     Timer solution_timer("Get the best result timing");
     std::cout << "Starting with signaling score: " << best_score << std::endl;
     Simulator::InitializeTrafficLights(model, best_signaling); // run on treads[0]?
-    for (size_t attempt = 0; attempt < attempts_; attempt++) { // attempt = nth
+    for (size_t attempt = 0; attempt < attempts_;) { // attempt = nth
         std::cout << DIVIDING_LINE << std::endl;
         std::cout << "CURRENT SCORE " << best_score << " (attempt: " << attempt << ")" << std::endl << std::flush;
         std::cout << DIVIDING_LINE << std::endl; 
         score = Simulator::Run(model, best_signaling, std::to_string(attempt));
         size_t index = best_signaling.GetNthWorstTrafficLightIndex(model, attempt);
-        if (score > best_score ) {
+        if (score > best_score) {
             std::cout << "Achieved better score: " << score << std::endl;
             best_score = score;
             attempt = 0;
@@ -69,9 +69,10 @@ Signaling Solution::GetBestSignaling() {
         model.Reset();
         TrafficLight& worst_traffic_light = best_signaling.traffic_lights[index];
         size_t street_id = worst_traffic_light.IncrWorstStreetDuration(model);
-        if (street_id <MAX_VALUE) {
+        if (street_id < MAX_VALUE) {
             std::cout << "Increased duration for street: " << input_data_.streets[street_id].name << std::endl;
-            attempt = 0;
+        } else {
+            attempt++;
         }
     }
     std::cout << DIVIDING_LINE << std::endl;
