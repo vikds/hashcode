@@ -40,18 +40,18 @@ void TrafficLight::Tick(Model& model) {
     }
 }
 
-bool TrafficLight::IncrWorstStreetDuration(Model& model) {
+size_t TrafficLight::IncrWorstStreetDuration(Model& model) {
     auto proceed_signal = std::max_element(schedule.begin(), schedule.end(),
         [&] (const ProceedSignal& lhs, const ProceedSignal& rhs) {
             return model.streets[lhs.street_id].time_wasted < model.streets[rhs.street_id].time_wasted;
         }
     );
     if (proceed_signal == schedule.end()) {
-        return false;
+        return std::numeric_limits<size_t>::max();
     }
     ProceedSignal& worst_street = *proceed_signal;
     worst_street.duration++;
-    return true;
+    return worst_street.street_id;
 }
 
 size_t TrafficLight::CountScheduledStreets() {

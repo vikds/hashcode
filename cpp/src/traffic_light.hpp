@@ -26,7 +26,7 @@ public:
 public:
     void Reset(Model& model);
     void Tick(Model& model);
-    bool IncrWorstStreetDuration(Model& model);
+    size_t IncrWorstStreetDuration(Model& model);
 
 private:
     size_t CountScheduledStreets();

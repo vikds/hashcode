@@ -13,7 +13,7 @@ void Usage(const char* binary_name) {
     std::cerr << "Usage: " << binary_name << " [-io] [-i input][-o output]" << std::endl;
     std::cerr << "\t-i|--input (required): input file" << std::endl;
     std::cerr << "\t-o|--output (required): output file" << std::endl;
-    std::cerr << "\t-a|--attempts: attempts in improve result (default: 10)" << std::endl;
+    std::cerr << "\t-a|--attempts: attempts in improve result (default: 1Get the best0)" << std::endl;
     std::cerr << "\t-h|--help: show this usage" << std::endl;
     std::exit(EX_USAGE);
 }

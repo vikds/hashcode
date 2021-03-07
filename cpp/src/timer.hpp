@@ -15,7 +15,7 @@ public:
     ~Timer();
 
 private:
-    std::string message_;
+    const std::string message_;
     Time start_;
 };
 
