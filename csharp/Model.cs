@@ -163,37 +163,52 @@ namespace HashCode {
             Finished = false;
         }
 
-        public void Move() {
-            if (Route.Length == 0) return;
+        public MoveResult Move() {
+            if (Route.Length == 0) return MoveResult.NA;
             if (LeftOnCurrentStreet > 0) {
                 LeftOnCurrentStreet--;
-            } else { // if (leftOnCurrentStreet == 0)
-                if (CurrentStreet.EndsAt.CarJustPassed) {
-                    Logger.Debug(
-                        "Car {0} is waiting in the line at intersection {1}",
-                        Id,
-                        CurrentStreet.EndsAt.Id
-                    );
-                } else if (CurrentStreet.TrafficLight != null
-                        && CurrentStreet.TrafficLight.State == TrafficLight.Colors.Red) {
-                    Logger.Debug(
-                        "Car {0} is waiting for green light at intersection {1}",
-                        Id,
-                        CurrentStreet.EndsAt.Id
-                    );
-                }
-                if (!CurrentStreet.EndsAt.CarJustPassed
-                        && (CurrentStreet.TrafficLight == null
-                        || CurrentStreet.TrafficLight.State == TrafficLight.Colors.Green)) {
-                    if (++currentStreetIndex >= Route.Length) {
-                        Logger.Debug("Car {0} successfully finished", Id);
-                        Finished = true;
-                    } else {
-                        CurrentStreet.StartsAt.CarJustPassed = true;
-                        LeftOnCurrentStreet = CurrentStreet.Length - 1;
-                    }
+                return MoveResult.StreetMovement;
+            }
+            // elseif (leftOnCurrentStreet == 0)
+            if (CurrentStreet.EndsAt.CarJustPassed) {
+                Logger.Debug(
+                    "Car {0} is waiting in the line at intersection {1}",
+                    Id,
+                    CurrentStreet.EndsAt.Id
+                );
+                return MoveResult.WaitingInTheLine;
+            } else if (CurrentStreet.TrafficLight == null ||
+                    (CurrentStreet.TrafficLight != null
+                    && CurrentStreet.TrafficLight.State == TrafficLight.Colors.Red)) {
+                Logger.Debug(
+                    "Car {0} is waiting for green light at intersection {1}",
+                    Id,
+                    CurrentStreet.EndsAt.Id
+                );
+                return MoveResult.WaitingAtRed;
+            } else if (!CurrentStreet.EndsAt.CarJustPassed
+                    && (CurrentStreet.TrafficLight == null
+                    || CurrentStreet.TrafficLight.State == TrafficLight.Colors.Green)) {
+                if (++currentStreetIndex >= Route.Length) {
+                    Logger.Debug("Car {0} successfully finished", Id);
+                    Finished = true;
+                    return MoveResult.JustFinished;
+                } else {
+                    CurrentStreet.StartsAt.CarJustPassed = true;
+                    LeftOnCurrentStreet = CurrentStreet.Length - 1;
+                    return MoveResult.PassedOnGreen;
                 }
             }
+            throw new System.Exception("We should not be here");
+        }
+
+        public enum MoveResult {
+            StreetMovement,
+            WaitingInTheLine,
+            WaitingAtRed,
+            PassedOnGreen,
+            JustFinished,
+            NA,
         }
     }
 }

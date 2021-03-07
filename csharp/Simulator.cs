@@ -13,6 +13,7 @@ namespace HashCode {
         private readonly Model _model;
         private readonly Schedule _schedule;
         private readonly Dictionary<string, int> _jam = new();
+        private Tuple<string, int> longestJam = new("", int.MinValue);
 
         public Model RunSimulation(out long elapsedMs) {
             var simulationWatch = Stopwatch.StartNew();
@@ -60,7 +61,25 @@ namespace HashCode {
                         Logger.Debug($"Car {car.Id} has already finished - skipping");
                         continue;
                     }
-                    car.Move();
+                    // var prevStreet = car.CurrentStreet;
+                    var movementState = car.Move();
+                    switch (movementState) {
+                        case Car.MoveResult.WaitingInTheLine:
+                        case Car.MoveResult.WaitingAtRed:
+                            if (!_jam.ContainsKey(car.CurrentStreet.Name)) {
+                                _jam[car.CurrentStreet.Name] = 0;
+                            }
+                            _jam[car.CurrentStreet.Name] += 1;
+                            break;
+                        case Car.MoveResult.PassedOnGreen:
+                        case Car.MoveResult.StreetMovement:
+                        case Car.MoveResult.JustFinished:
+                        case Car.MoveResult.NA:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
                     if (car.Finished) {
                         var score = freshModel.Bonus + (freshModel.Duration - timer);
                         Logger.Debug(
@@ -73,12 +92,18 @@ namespace HashCode {
                 }
 
                 // find jams
-                foreach (var car in freshModel.Cars.Where(c => c.Route.Length > 0 && !c.Finished)) {
-                    if (!_jam.ContainsKey(car.CurrentStreet.Name)) {
-                        _jam[car.CurrentStreet.Name] = 0;
-                    }
-                    _jam[car.CurrentStreet.Name]++;
-                }
+                // var jams = new Dictionary<string, int>();
+                // foreach (var car in freshModel.Cars.Where(c => c.Route.Length > 0 && !c.Finished)) {
+                //     if (!jams.ContainsKey(car.CurrentStreet.Name)) {
+                //         jams[car.CurrentStreet.Name] = 0;
+                //     }
+                //     jams[car.CurrentStreet.Name]++;
+                // }
+                // foreach (var kvp in jams) {
+                //     if (kvp.Value > longestJam.Item2) {
+                //         longestJam = new(kvp.Key, kvp.Value);
+                //     }
+                // }
 
                 Logger.Debug($"Timer {timer} finished <<<<<<<<<<<");
                 Logger.Divider();
@@ -90,9 +115,11 @@ namespace HashCode {
         }
 
         public void UpdateSchedule() {
+            // _schedule.DataMap[longestJam.Item1].GreenDuration += 1;
+
             if (_jam.Count == 0) return;
 
-            foreach (var kvp in _jam.OrderByDescending(j => j.Value).Take(_jam.Count / 10)) {
+            foreach (var kvp in _jam.OrderByDescending(j => j.Value).Take(Math.Max(_jam.Count / 20, 2))) { //_jam.Count / 20)) {
                 _schedule.DataMap[kvp.Key].GreenDuration += 1;
             }
 

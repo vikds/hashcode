@@ -40,7 +40,7 @@ namespace HashCode {
                     simulator.UpdateSchedule();
                 });
             } else {
-                for (var i = 0; i < 200; i++) {
+                for (var i = 0; i < 20; i++) {
                     Logger.Info($"Simulation {i + 1} started");
                     var freshModel = simulator.RunSimulation(out long elapsedMs);
                     Logger.Info($"Simulation {i + 1} completed. Total score is {freshModel.Score}. Took {elapsedMs / 1000.0:#.##} seconds");

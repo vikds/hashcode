@@ -57,7 +57,7 @@ namespace HashCode {
 
             var outputFileName = Path.Combine(
                 outputFolderName,
-                $"{inputFileNameWithoutExtension}_{DateTime.Now:yyyy_MM_dd_HH_mm}_Score_{model.Score}"
+                $"{inputFileNameWithoutExtension}_Score_{model.Score}_{DateTime.Now:yyyy_MM_dd_HH_mm}"
             );
             outputFileName = Path.ChangeExtension(outputFileName, inputFileNameExtension);
 
