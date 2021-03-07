@@ -7,10 +7,11 @@ set(SOURCES
     src/intersection.cpp
     src/main.cpp
     src/model.cpp
-    src/result.cpp
+    src/signaling.cpp
     src/simulator.cpp
     src/solution.cpp
     src/street.cpp
+    src/timer.cpp
     src/traffic_light.cpp
 )
 

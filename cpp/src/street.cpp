@@ -1,6 +1,7 @@
 #include "street.hpp"
 
 #include "fwd.hpp"
+#include "car.hpp"
 #include "intersection.hpp"
 
 namespace hashcode
@@ -29,11 +30,12 @@ void Street::AddTimeWasted() {
     time_wasted++;
 }
 
-bool Street::IsAllowedToTurn(Car* car) const {
+bool Street::IsAllowedToTurn(CarRef car) const {
     if (!is_green || car_passed) {
         return false;
     }
-    return car == cars.front();
+    CarRef front_car = cars.front();
+    return car.get().id() == front_car.get().id();
 }
 
 } // namespace hashcode

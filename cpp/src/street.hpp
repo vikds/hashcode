@@ -22,10 +22,10 @@ public:
     void Reset();
     void Tick();
     void AddTimeWasted();
-    bool IsAllowedToTurn(Car* car) const;
+    bool IsAllowedToTurn(CarRef car) const;
 
 public:
-    std::deque<Car*> cars;
+    std::deque<CarRef> cars;
     size_t cars_expected = 0;
     size_t time_wasted = 0;
     bool car_passed = false;

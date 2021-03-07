@@ -16,7 +16,7 @@ public:
     void Reset();
 
 public:
-    std::vector<Street*> streets;
+    std::vector<StreetRef> streets;
     size_t time_wasted = 0;
 
 private:

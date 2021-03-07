@@ -4,7 +4,7 @@
 
 #include "fwd.hpp"
 #include "model.hpp"
-#include "result.hpp"
+#include "signaling.hpp"
 #include "solution.hpp"
 
 using namespace hashcode;
@@ -92,12 +92,10 @@ int main(int argc, char* argv[]) {
             delete_file(args.output_file);
         }
 
-        ModelData model_data(args.input_file);
-        Model model(model_data);
-
-        Solution solution(model, args.attempts);
-        Result result = solution.GetBestResult();
-        result.SaveToFile(args.output_file);
+        InputData input_data(args.input_file);
+        Solution solution(input_data, args.attempts);
+        Signaling best_signaling = solution.GetBestSignaling();
+        best_signaling.SaveToFile(input_data, args.output_file);
 
     } catch(const std::exception& ex) {
         return EXIT_FAILURE;

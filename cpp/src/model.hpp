@@ -9,8 +9,8 @@
 namespace hashcode
 {
 
-struct ModelData {
-    ModelData(const std::string& file_name);
+struct InputData {
+    InputData(const std::string& file_name);
 
     size_t simulation_time;
     size_t intersections_num;
@@ -33,13 +33,13 @@ struct ModelData {
 
 class Model {
 public:
-    Model(const ModelData& data);
+    Model(const InputData& data);
 
     size_t simulation_time() const {
-        return data_.simulation_time;
+        return input_data_.simulation_time;
     }
     size_t finish_bonus() const {
-        return data_.finish_bonus;
+        return input_data_.finish_bonus;
     }
 
     void Reset();
@@ -54,7 +54,7 @@ public:
     std::vector<Street> streets;
 
 private:
-    const ModelData& data_;
+    const InputData& input_data_;
 };
 
 } // namespace hashcode

@@ -1,48 +1,63 @@
 #include "traffic_light.hpp"
 
+#include <algorithm>
+
 #include "fwd.hpp"
 #include "intersection.hpp"
+#include "model.hpp"
 #include "street.hpp"
 
 namespace hashcode
 {
 
-StreetLight::StreetLight(Street* street, size_t duration)
-  : street(street),
+ProceedSignal::ProceedSignal(size_t street_id, size_t duration)
+  : street_id(street_id),
     duration(duration)
 {}
 
-TrafficLight::TrafficLight(const Intersection& intersection, const Schedule& schedule)
-  : intersection(&intersection),
+TrafficLight::TrafficLight(size_t intersection_id, const Schedule& schedule)
+  : intersection_id_(intersection_id),
     schedule(schedule)
-{
-    Reset();
-}
+{}
 
-void TrafficLight::Reset() {
+void TrafficLight::Reset(Model& model) {
     clock_ = 0;
     direction_ = 0;
     if (CountScheduledStreets() == 0) {
         return;
     }
-    StreetLight& street_light = GetNextScheduledStreet();
-    street_light.street->is_green = true;
+    ProceedSignal& proceed_signal = GetNextScheduledProceedSignal();
+    model.streets[proceed_signal.street_id].is_green = true;
 }
 
-void TrafficLight::Tick() {
+void TrafficLight::Tick(Model& model) {
     if (scheduled_streets_ <= 1) {
         return;
     }
-    StreetLight& street_light = GetNextScheduledStreet();
-    if (++clock_ == street_light.duration) {
-        Switch(street_light);
+    ProceedSignal& proceed_signal = GetNextScheduledProceedSignal();
+    if (++clock_ == proceed_signal.duration) {
+        Switch(proceed_signal, model);
     }
+}
+
+bool TrafficLight::IncrWorstStreetDuration(Model& model) {
+    auto proceed_signal = std::max_element(schedule.begin(), schedule.end(),
+        [&] (const ProceedSignal& lhs, const ProceedSignal& rhs) {
+            return model.streets[lhs.street_id].time_wasted < model.streets[rhs.street_id].time_wasted;
+        }
+    );
+    if (proceed_signal == schedule.end()) {
+        return false;
+    }
+    ProceedSignal& worst_street = *proceed_signal;
+    worst_street.duration++;
+    return true;
 }
 
 size_t TrafficLight::CountScheduledStreets() {
     size_t result = 0;
-    for (const StreetLight& street_light : schedule) {
-        if (street_light.duration > 0) {
+    for (const ProceedSignal& proceed_signal : schedule) {
+        if (proceed_signal.duration > 0) {
             result++;
         }
     }
@@ -50,22 +65,22 @@ size_t TrafficLight::CountScheduledStreets() {
     return result;
 }
 
-StreetLight& TrafficLight::GetNextScheduledStreet() {
+ProceedSignal& TrafficLight::GetNextScheduledProceedSignal() {
     for (size_t i = 0; i < schedule.size(); i++) {
-        StreetLight& street_light = schedule[direction_];
-        if (street_light.duration > 0) {
-            return street_light;
+        ProceedSignal& proceed_signal = schedule[direction_];
+        if (proceed_signal.duration > 0) {
+            return proceed_signal;
         }
         direction_ = (direction_ + 1) % schedule.size();
     }
-    throw std::runtime_error("At least one street light is expected to be scheduled");
+    throw std::runtime_error("At least one proceed signal is expected to be scheduled");
 }
 
-void TrafficLight::Switch(StreetLight& curr_street_light) {
-    curr_street_light.street->is_green = false;
+void TrafficLight::Switch(ProceedSignal& curr_proceed_signal, Model& model) {
+    model.streets[curr_proceed_signal.street_id].is_green = false;
     direction_ = (direction_ + 1) % schedule.size();
-    StreetLight& next_street_light = GetNextScheduledStreet();
-    next_street_light.street->is_green = true;
+    ProceedSignal& next_proceed_signal = GetNextScheduledProceedSignal();
+    model.streets[next_proceed_signal.street_id].is_green = true;
     clock_ = 0;
 }
 

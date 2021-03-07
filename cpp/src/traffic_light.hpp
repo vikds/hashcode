@@ -5,37 +5,39 @@
 namespace hashcode
 {
 
-struct StreetLight {
-    StreetLight(Street* street, size_t duration);
+struct ProceedSignal {
+    ProceedSignal(size_t street_id, size_t duration);
 
-    Street* street;
+    size_t street_id;
     size_t duration;
 };
 
-using Schedule = std::vector<StreetLight>; 
-
 class TrafficLight {
 public:
-    TrafficLight(const Intersection& intersection, const Schedule& schedule);
+    TrafficLight(size_t intersection_id, const Schedule& schedule);
 
+    size_t intersection_id() const {
+        return intersection_id_;
+    }
     size_t scheduled_streets() const {
         return scheduled_streets_;
     }
 
 public:
-    void Reset();
-    void Tick();
+    void Reset(Model& model);
+    void Tick(Model& model);
+    bool IncrWorstStreetDuration(Model& model);
 
 private:
     size_t CountScheduledStreets();
-    StreetLight& GetNextScheduledStreet();
-    void Switch(StreetLight& curr_street_light);
+    ProceedSignal& GetNextScheduledProceedSignal();
+    void Switch(ProceedSignal& curr_proceed_signal, Model& model);
 
 public:
-    const Intersection* intersection;
     Schedule schedule;
 
 private:
+    size_t intersection_id_;
     size_t clock_ = 0;
     size_t direction_ = 0;
     size_t scheduled_streets_;

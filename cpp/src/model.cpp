@@ -10,7 +10,7 @@
 namespace hashcode
 {
 
-ModelData::ModelData(const std::string& file_name) {
+InputData::InputData(const std::string& file_name) {
     std::ifstream input(file_name);
     input >> simulation_time;
     input >> intersections_num;
@@ -53,30 +53,31 @@ ModelData::ModelData(const std::string& file_name) {
     }
 }
 
-Model::Model(const ModelData& data)
-  : data_(data)
+Model::Model(const InputData& input_data)
+  : input_data_(input_data)
 {
-    intersections.reserve(data_.intersections_num);
-    for (size_t id = 0; id < data_.intersections_num; id++) {
+    intersections.reserve(input_data_.intersections_num);
+    for (size_t id = 0; id < input_data_.intersections_num; id++) {
         intersections.push_back(Intersection(id));
     }
 
-    streets.reserve(data_.streets_num);
-    for (size_t id = 0; id < data_.streets_num; id++) {
-        const ModelData::Street& street = data_.streets[id];
+    streets.reserve(input_data_.streets_num);
+    for (size_t id = 0; id < input_data_.streets_num; id++) {
+        const InputData::Street& street = input_data_.streets[id];
         Intersection& intersection = intersections[street.intersection_id];
         streets.push_back(Street(id, intersection, street.travel_time));
-        intersection.streets.push_back(&streets.back());
+        intersection.streets.push_back(streets.back());
     }
 
-    std::vector<Street*> path;
-    cars.reserve(data_.cars_num);
-    for (const ModelData::Car& car : data_.cars) {
+    std::vector<StreetRef> path;
+    cars.reserve(input_data_.cars_num);
+    for (size_t id = 0; id < input_data_.cars_num; id++) {
         path.clear();
+        const InputData::Car& car = input_data_.cars[id];
         for (const size_t& street_id : car.path) {
-            path.push_back(&streets[street_id]);
+            path.push_back(streets[street_id]);
         }
-        cars.push_back(Car(path));
+        cars.push_back(Car(id, path));
     }
     InitCarsOnStreets();
 }
@@ -97,8 +98,8 @@ void Model::InitCarsOnStreets() {
         if (car.path().empty()) {
             continue;
         }
-        Street* street = car.path().front();
-        street->cars.push_back(&car);
+        Street& street = car.path().front();
+        street.cars.push_back(car);
     }
 }
 
@@ -111,11 +112,11 @@ void Model::CountCarsExpectedOnTheStreets() {
             if (travel_time > simulation_time()) {
                 break;
             }
-            Street* street = *it;
+            Street& street = *it;
             if (it != car.path().begin()) {
-                travel_time += street->travel_time();
+                travel_time += street.travel_time();
             }
-            street->cars_expected++;
+            street.cars_expected++;
         }
     }
 }

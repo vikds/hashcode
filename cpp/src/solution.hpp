@@ -2,21 +2,23 @@
 
 #include "fwd.hpp"
 
+#include "signaling.hpp"
+
 namespace hashcode
 {
 
 class Solution {
 public:
-    Solution(Model& model, size_t attempts);
+    Solution(const InputData& input_data, size_t attempts);
 
-    Result GetBestResult();
-
-private:
-    TrafficLight* GetMaxTimeWastedTrafficLight(std::vector<TrafficLight>& traffic_lights, size_t index);
-    bool ExtendMaxTimeWastedStreet(TrafficLight& traffic_light);
+    Signaling GetBestSignaling();
 
 private:
-    Model& model_;
+    TrafficLight* GetNthWorstTrafficLight(TrafficLights& traffic_lights, size_t index);
+    bool ExtendMaxTimeWastedStreet(Model& model, TrafficLight& traffic_light);
+
+private:
+    const InputData& input_data_;
     size_t attempts_;
 };
 

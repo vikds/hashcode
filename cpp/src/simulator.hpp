@@ -1,14 +1,15 @@
 #pragma once
 
 #include "fwd.hpp"
+#include "signaling.hpp"
 
 namespace hashcode
 {
 
 class Simulator {
 public:
-    static void InitializeTrafficLights(Model& model, std::vector<TrafficLight>& traffic_lights);
-    static size_t Run(Model& model, std::vector<TrafficLight>& traffic_lights);
+    static void InitializeTrafficLights(Model& model, Signaling& signaling);
+    static size_t Run(Model& model, Signaling& singnaling);
 };
 
 } // namespace hashcode

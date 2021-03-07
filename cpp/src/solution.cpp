@@ -5,86 +5,66 @@
 #include "car.hpp"
 #include "fwd.hpp"
 #include "model.hpp"
-#include "result.hpp"
 #include "simulator.hpp"
 #include "street.hpp"
+#include "timer.hpp"
 
 namespace hashcode
 {
 
-Solution::Solution(Model& model, size_t attempts)
-  : model_(model),
+Solution::Solution(const InputData& input_data, size_t attempts)
+  : input_data_(input_data),
     attempts_(attempts)
 {}
 
-Result Solution::GetBestResult() {
-    size_t bonus;
-    size_t max_bonus = 0;
-    Result curr;
-    Result best;
-    Simulator::InitializeTrafficLights(model_, best.traffic_lights);
-    for (size_t attempt = 0; attempt < attempts_; attempt++) {
-        curr = best;
-        max_bonus = Simulator::Run(model_, curr.traffic_lights);
-        std::cout << "Current traffic signaling bonus: " << max_bonus << std::endl;
-        TrafficLight* traffic_light = GetMaxTimeWastedTrafficLight(curr.traffic_lights, attempt);
-        if (!traffic_light) {
-            std::cout << "Final traffic signaling bonus: " << max_bonus << std::endl;
-            return best;
+Signaling Solution::GetBestSignaling() {
+    Model model(input_data_); // threads? initialize models[threads]
+    size_t score = 0;
+    size_t best_score = 0;
+    Signaling best_signaling;
+    Timer solution_timer("Get the best result");
+    std::cout << "Starting with signaling score: " << best_score << std::endl;
+    Simulator::InitializeTrafficLights(model, best_signaling); // run on tread[0]?
+    for (size_t attempt = 0; attempt < attempts_; attempt++) { // attempt = nth
+        score = Simulator::Run(model, best_signaling);
+        std::cout << "Current signaling score: " << score << " (attempt: " << attempt << ")" << std::endl;
+        size_t index = best_signaling.GetNthWorstTrafficLightIndex(model, attempt);
+        if (score > best_score ) {
+            best_score = score;
+            attempt = 0;
         }
-        bool improved = false;
-        Schedule& schedule = traffic_light->schedule;
-        for (size_t rotation = 0; rotation < schedule.size(); rotation++) {
-            std::rotate(schedule.begin(), schedule.begin() + 1, schedule.end());
-            bonus = Simulator::Run(model_, curr.traffic_lights);
-            if (bonus > max_bonus) {
-                best = curr;
-                max_bonus = bonus;
-                improved = true;
-                attempt = 0;
+        if (index >= best_signaling.traffic_lights.size()) {
+            std::cout << "Final traffic signaling score: " << best_score << std::endl;
+            return best_signaling;
+        }
+        bool score_updated = false;
+        size_t schedule_size = best_signaling.traffic_lights[index].schedule.size();
+        // rotation can be paralleled for different model[thread]? OMP?
+        for (size_t rotation = 1; rotation < schedule_size; rotation++) {
+            Timer rotation_timer("Rotation of schedule " + std::to_string(rotation));
+            Signaling signaling = best_signaling;
+            Schedule& worst_schedule = signaling.traffic_lights[index].schedule;
+            std::rotate(worst_schedule.begin(), worst_schedule.begin() + rotation, worst_schedule.end());
+            score = Simulator::Run(model, signaling);
+            if (score > best_score) {
+                score_updated = true;
+                best_signaling = signaling;
+                best_score = score;
             }
         }
-        if (improved) {
+        // run main thread[0]
+        if (score_updated) {
+            attempt = 0;
             continue;
         }
-        ExtendMaxTimeWastedStreet(*traffic_light);
-        bonus = Simulator::Run(model_, curr.traffic_lights);
-        if (bonus > max_bonus) {
-            best = curr;
-            max_bonus = bonus;
+        model.Reset();
+        TrafficLight& worst_traffic_light = best_signaling.traffic_lights[index];
+        if (worst_traffic_light.IncrWorstStreetDuration(model)) {
             attempt = 0;
         }
     }
-    std::cout << "Best traffic signaling bonus: " << max_bonus << std::endl;
-    return best;
-}
-
-TrafficLight* Solution::GetMaxTimeWastedTrafficLight(std::vector<TrafficLight>& traffic_lights, size_t index) {
-    if (index >= traffic_lights.size()) {
-        return nullptr;
-    }
-    std::nth_element(traffic_lights.begin(), traffic_lights.begin() + index, traffic_lights.end(),
-        [&] (const TrafficLight& lhs, const TrafficLight& rhs) {
-            return lhs.intersection->time_wasted > rhs.intersection->time_wasted;
-        }
-    );
-    if (traffic_lights[index].intersection->time_wasted == 0) {
-        return nullptr;
-    }
-    return &traffic_lights[index];
-}
-
-bool Solution::ExtendMaxTimeWastedStreet(TrafficLight& traffic_light) {
-    auto street_light = std::max_element(traffic_light.schedule.begin(), traffic_light.schedule.end(),
-        [&] (const StreetLight& lhs, const StreetLight& rhs) {
-            return lhs.street->time_wasted < rhs.street->time_wasted;
-        }
-    );
-    if (street_light == traffic_light.schedule.end()) {
-        return false;
-    }
-    street_light->duration++;
-    return true;
+    std::cout << "Best traffic signaling score: " << best_score << std::endl;
+    return best_signaling;
 }
 
 } // namespace hashcode

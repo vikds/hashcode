@@ -6,8 +6,9 @@
 namespace hashcode
 {
 
-Car::Car(const std::vector<Street*>& path)
-  : path_(path),
+Car::Car(size_t id, const std::vector<StreetRef>& path)
+  : id_(id),
+    path_(path),
     position_(0),
     finish_time_(0),
     left_to_go_(0)
@@ -27,26 +28,26 @@ void Car::Tick(size_t time) {
         left_to_go_--;
         return;
     }
-    Street* street = path_[position_];
-    if (street->IsAllowedToTurn(this)) {
+    Street& street = path_[position_];
+    if (street.IsAllowedToTurn(*this)) {
         Turn(time);
     } else {
-        street->AddTimeWasted();
+        street.AddTimeWasted();
     }
 }
 
 void Car::Turn(size_t time) {
-    Street* curr_street = path_[position_];
-    curr_street->cars.pop_front();
-    curr_street->car_passed = true;
+    Street& curr_street = path_[position_];
+    curr_street.cars.pop_front();
+    curr_street.car_passed = true;
     position_++;
     if (has_finished()) {
         finish_time_ = time;
         return;
     }
-    Street* next_street = path_[position_];
-    next_street->cars.push_back(this);
-    left_to_go_ = next_street->travel_time();
+    Street& next_street = path_[position_];
+    next_street.cars.push_back(*this);
+    left_to_go_ = next_street.travel_time();
 }
 
 

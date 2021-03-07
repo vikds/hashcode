@@ -4,6 +4,7 @@
 
 #include "fwd.hpp"
 #include "model.hpp"
+#include "timer.hpp"
 #include "traffic_light.hpp"
 
 namespace hashcode
@@ -14,47 +15,49 @@ struct CarsOnStreetOrExpectedGreater {
       : model_(model)
     {}
 
-    bool operator()(const StreetLight& lhs, const StreetLight& rhs) {
-        if (lhs.street->cars.size() == rhs.street->cars.size()) {
-            return lhs.street->cars_expected > rhs.street->cars_expected;
+    bool operator()(const ProceedSignal& lhs, const ProceedSignal& rhs) {
+        if (model_.streets[lhs.street_id].cars.size() == model_.streets[rhs.street_id].cars.size()) {
+            return model_.streets[lhs.street_id].cars_expected > model_.streets[rhs.street_id].cars_expected;
         }
-        return lhs.street->cars.size() > rhs.street->cars.size();
+        return model_.streets[lhs.street_id].cars.size() > model_.streets[rhs.street_id].cars.size();
     }
 
 private:
     const Model& model_;
 };
 
-void Simulator::InitializeTrafficLights(Model& model, std::vector<TrafficLight>& traffic_lights) {
+void Simulator::InitializeTrafficLights(Model& model, Signaling& signaling) {
+    Timer rotation_timer("Simulator initalizing");
     model.CountCarsExpectedOnTheStreets();
     for (Intersection& intersection : model.intersections) {
         Schedule schedule;
-        for (Street* street : intersection.streets) {
-            if (street->cars_expected == 0) {
+        for (Street& street : intersection.streets) {
+            if (street.cars_expected == 0) {
                 continue;
             }
-            schedule.push_back(StreetLight(street, 1));
+            schedule.push_back(ProceedSignal(street.id(), 1));
         }
         if (schedule.empty()) {
             continue;
         }
         std::sort(schedule.begin(), schedule.end(), CarsOnStreetOrExpectedGreater(model));
-        TrafficLight traffic_light(intersection, schedule);
-        traffic_lights.push_back(traffic_light);
+        TrafficLight traffic_light(intersection.id(), schedule);
+        signaling.traffic_lights.push_back(traffic_light);
     }
 }
 
-size_t Simulator::Run(Model& model, std::vector<TrafficLight>& traffic_lights) {
+size_t Simulator::Run(Model& model, Signaling& signaling) {
+    Timer rotation_timer("Simulator run");
     model.Reset();
-    for (TrafficLight& traffic_light : traffic_lights) {
-        traffic_light.Reset();
+    for (TrafficLight& traffic_light : signaling.traffic_lights) {
+        traffic_light.Reset(model);
     }
     for (size_t time = 0; time <= model.simulation_time(); time++) {
         for (Car& car : model.cars) {
             car.Tick(time);
         }
-        for (TrafficLight& traffic_light : traffic_lights) {
-            traffic_light.Tick();
+        for (TrafficLight& traffic_light : signaling.traffic_lights) {
+            traffic_light.Tick(model);
         }
         for (Street& street : model.streets) {
             street.Tick();
