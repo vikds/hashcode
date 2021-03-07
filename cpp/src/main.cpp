@@ -92,6 +92,10 @@ int main(int argc, char* argv[]) {
             delete_file(args.output_file);
         }
 
+        std::cout << "Input file: " << args.input_file << std::endl;
+        std::cout << "Output file: " << args.output_file << std::endl;
+        std::cout << "Attempts: " << args.attempts << std::endl;
+
         InputData input_data(args.input_file);
         Solution solution(input_data, args.attempts);
         Signaling best_signaling = solution.GetBestSignaling();
