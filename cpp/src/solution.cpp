@@ -12,6 +12,8 @@
 namespace hashcode
 {
 
+static const std::string DIVIDING_LINE = "----------------------------------------------------------";
+
 Solution::Solution(const InputData& input_data, size_t attempts)
   : input_data_(input_data),
     attempts_(attempts)
@@ -24,22 +26,26 @@ Signaling Solution::GetBestSignaling() {
     Signaling best_signaling;
     Timer solution_timer("Get the best result");
     std::cout << "Starting with signaling score: " << best_score << std::endl;
-    Simulator::InitializeTrafficLights(model, best_signaling); // run on tread[0]?
+    Simulator::InitializeTrafficLights(model, best_signaling); // run on treads[0]?
     for (size_t attempt = 0; attempt < attempts_; attempt++) { // attempt = nth
+        std::cout << DIVIDING_LINE << std::endl;
+        std::cout << "CURRENT SCORE " << best_score << " (attempt: " << attempt << ")" << std::endl;
+        std::cout << DIVIDING_LINE << std::endl; 
         score = Simulator::Run(model, best_signaling);
-        std::cout << "Current signaling score: " << score << " (attempt: " << attempt << ")" << std::endl;
         size_t index = best_signaling.GetNthWorstTrafficLightIndex(model, attempt);
         if (score > best_score ) {
             best_score = score;
             attempt = 0;
         }
         if (index >= best_signaling.traffic_lights.size()) {
-            std::cout << "Final traffic signaling score: " << best_score << std::endl;
+            std::cout << DIVIDING_LINE << std::endl; 
+            std::cout << "FINAL SCORE: " << best_score << std::endl;
+            std::cout << DIVIDING_LINE << std::endl; 
             return best_signaling;
         }
         bool score_updated = false;
         size_t schedule_size = best_signaling.traffic_lights[index].schedule.size();
-        // rotation can be paralleled for different model[thread]? OMP?
+        // rotation can be paralleled for different model[thread]: OMP?
         for (size_t rotation = 1; rotation < schedule_size; rotation++) {
             Timer rotation_timer("Rotation of schedule " + std::to_string(rotation));
             Signaling signaling = best_signaling;
@@ -47,8 +53,8 @@ Signaling Solution::GetBestSignaling() {
             std::rotate(worst_schedule.begin(), worst_schedule.begin() + rotation, worst_schedule.end());
             score = Simulator::Run(model, signaling);
             if (score > best_score) {
-                score_updated = true;
                 best_signaling = signaling;
+                score_updated = true;
                 best_score = score;
             }
         }
@@ -63,7 +69,9 @@ Signaling Solution::GetBestSignaling() {
             attempt = 0;
         }
     }
-    std::cout << "Best traffic signaling score: " << best_score << std::endl;
+    std::cout << DIVIDING_LINE << std::endl;
+    std::cout << "BEST SCORE: " << best_score << std::endl;
+    std::cout << DIVIDING_LINE << std::endl;
     return best_signaling;
 }
 

@@ -13,8 +13,6 @@
 namespace hashcode
 {
 
-const size_t Signaling::MAX_VALUE = std::numeric_limits<size_t>::max();
-
 void Signaling::SaveToFile(const InputData& input_data, const std::string& file_name) {
     std::ofstream output(file_name);
     output << CountScheduledTrafficLights() << std::endl;
@@ -22,20 +20,23 @@ void Signaling::SaveToFile(const InputData& input_data, const std::string& file_
         if (traffic_light.scheduled_streets() == 0) {
             continue;
         }
-        // output << traffic_light.intersection.get().id() << std::endl;
-        // output << traffic_light.scheduled_streets() << std::endl;
+        output << traffic_light.intersection_id() << std::endl;
+        output << traffic_light.scheduled_streets() << std::endl;
         for (const ProceedSignal& proceed_signal : traffic_light.schedule) {
             if (proceed_signal.duration == 0) {
                 continue;
             }
-            // output << street_light.street->name() << " " << street_light.duration << std::endl;
+            output << input_data.streets[proceed_signal.street_id].name;
+            output << " ";
+            output << " " << proceed_signal.duration;
+            output << std::endl;
         }
     }
 }
 
 size_t Signaling::GetNthWorstTrafficLightIndex(const Model& model, size_t nth) {
     if (nth >= traffic_lights.size()) {
-        return MAX_VALUE;
+        return std::numeric_limits<size_t>::max();
     }
     std::nth_element(traffic_lights.begin(), traffic_lights.begin() + nth, traffic_lights.end(),
         [&] (const TrafficLight& lhs, const TrafficLight& rhs) {
@@ -43,7 +44,7 @@ size_t Signaling::GetNthWorstTrafficLightIndex(const Model& model, size_t nth) {
         }
     );
     if (model.intersections[traffic_lights[nth].intersection_id()].time_wasted == 0) {
-        return MAX_VALUE;
+        return std::numeric_limits<size_t>::max();
     }
     return nth;
 }
