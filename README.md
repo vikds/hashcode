@@ -88,7 +88,7 @@ $ dotnet run -i input.txt -o ./output
 | - | - | - |
 | 1 | A – An example | 2 000 |
 | 2 | B – By the ocean | 4 565 916 |
-| 3 | C – Checkmate | TBP |
+| 3 | C – Checkmate | 1 242 070 |
 | 4 | D – Daily commute | TBP |
 | 5 | E – Etoile | 697 648 |
 | 6 | F – Forever jammed | TBP |
