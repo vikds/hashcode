@@ -91,6 +91,6 @@ $ dotnet run -i input.txt -o ./output
 | 3 | C – Checkmate | 1 242 070 |
 | 4 | D – Daily commute | TBP |
 | 5 | E – Etoile | 697 648 |
-| 6 | F – Forever jammed | TBP |
+| 6 | F – Forever jammed | 1 196 271 |
 
     Total: TBP
