@@ -45,7 +45,7 @@ $ ./hashcode --input=../../input/a.txt --output=../results/a.txt
 | 5 | E – Etoile | 705 971 |
 | 6 | F – Forever jammed | 780 765 |
 
-    Total: 9,482,434 points
+    Total: 9,496,277 points
 
 ## Building C# code
 [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) is required to build C# code located in `./csharp` folder. It's a completely separated version of the solution and not related in any way to a C++ code.
