@@ -39,11 +39,11 @@ $ ./hashcode --input=../../input/a.txt --output=../results/a.txt
 |   | Name | Score |
 | - | - | - |
 | 1 | A – An example | 2 002 |
-| 2 | B – By the ocean |4 566 658 |
-| 3 | C – Checkmate | 1 298 533 |
+| 2 | B – By the ocean | 4 566 625 |
+| 3 | C – Checkmate | 1 299 034 |
 | 4 | D – Daily commute | 1 567 509 |
-| 5 | E – Etoile | 705 093 |
-| 6 | F – Forever jammed | 1 342 639 |
+| 5 | E – Etoile | 705 971 |
+| 6 | F – Forever jammed | 780 765 |
 
     Total: 9,482,434 points
 
