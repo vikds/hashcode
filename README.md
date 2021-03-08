@@ -87,10 +87,10 @@ $ dotnet run -i input.txt -o ./output
 |   | Name | Score |
 | - | - | - |
 | 1 | A – An example | 2 000 |
-| 2 | B – By the ocean | 4 559  991 |
-| 3 | C – Checkmate | TBP |
+| 2 | B – By the ocean | 4 565 916 |
+| 3 | C – Checkmate | 1 242 070 |
 | 4 | D – Daily commute | TBP |
-| 5 | E – Etoile | TBP |
-| 6 | F – Forever jammed | TBP |
+| 5 | E – Etoile | 697 648 |
+| 6 | F – Forever jammed | 1 196 271 |
 
     Total: TBP

@@ -2,19 +2,23 @@ using System;
 
 namespace HashCode {
     public static class Logger {
-        private static bool write = false;
+        private static bool _write = false;
         
         public static void Init(bool writeToConsole) {
-            write = writeToConsole;
+            _write = writeToConsole;
         }
 
         public static void Divider() {
-            if (!write) return;
+            if (!_write) return;
             Console.WriteLine();
         }
 
-        public static void Log(string format, params object[] args) {
-            if (!write) return;
+        public static void Debug(string format, params object[] args) {
+            if (!_write) return;
+            Console.WriteLine(format, args);
+        }
+        
+        public static void Info(string format, params object[] args) {
             Console.WriteLine(format, args);
         }
     }
