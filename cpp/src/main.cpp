@@ -13,20 +13,11 @@ void Usage(const char* binary_name) {
     std::cerr << "Usage: " << binary_name << " [-io] [-i input][-o output]" << std::endl;
     std::cerr << "\t-i|--input (required): input file" << std::endl;
     std::cerr << "\t-o|--output (required): output file" << std::endl;
-    std::cerr << "\t-a|--attempts: attempts in improve result (default: 30)" << std::endl;
+    std::cerr << "\t-a|--attempts: attempts to improve result (default: 10)" << std::endl;
+    std::cerr << "\t-r|--rotations: schedule rotations to improve result (default: 10)" << std::endl;
     std::cerr << "\t-h|--help: show this usage" << std::endl;
     std::exit(EX_USAGE);
 }
-
-struct Arguments {
-    Arguments()
-      : attempts(30)
-    {}
-
-    std::string input_file;
-    std::string output_file;
-    size_t attempts;
-};
 
 Arguments ParseArguments(int argc, char* argv[]) {
     Arguments arguments;
@@ -34,6 +25,7 @@ Arguments ParseArguments(int argc, char* argv[]) {
         { "input", required_argument, nullptr, 'i' },
         { "output", required_argument, nullptr, 'o' },
         { "attempts", required_argument, nullptr, 'a' },
+        { "rotations", required_argument, nullptr, 'r' },
         { "help", no_argument, nullptr, 'h' },
         { nullptr, 0, nullptr, 0 }
     };
@@ -49,6 +41,9 @@ Arguments ParseArguments(int argc, char* argv[]) {
                 break;
             case 'a':
                 arguments.attempts = std::atoi(optarg);
+                break;
+            case 'r':
+                arguments.rotations = std::atoi(optarg);
                 break;
             case 'h':
                 Usage(binary_name);
@@ -92,12 +87,8 @@ int main(int argc, char* argv[]) {
             delete_file(args.output_file);
         }
 
-        std::cout << "Input file: " << args.input_file << std::endl;
-        std::cout << "Output file: " << args.output_file << std::endl;
-        std::cout << "Attempts: " << args.attempts << std::endl;
-
-        InputData input_data(args.input_file);
-        Solution solution(input_data, args.attempts);
+        InputData input_data(args);
+        Solution solution(input_data);
         Signaling best_signaling = solution.GetBestSignaling();
         best_signaling.SaveToFile(input_data, args.output_file);
 

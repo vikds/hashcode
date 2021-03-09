@@ -9,7 +9,7 @@ namespace hashcode
 
 class Solution {
 public:
-    Solution(const InputData& input_data, size_t attempts);
+    Solution(const InputData& input_data);
 
     Signaling GetBestSignaling();
 
@@ -19,7 +19,6 @@ private:
 
 private:
     const InputData& input_data_;
-    size_t attempts_;
 };
 
 } // namespace hashcode

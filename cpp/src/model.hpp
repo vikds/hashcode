@@ -9,9 +9,17 @@
 namespace hashcode
 {
 
-struct InputData {
-    InputData(const std::string& file_name);
+struct Arguments {
+    std::string input_file;
+    std::string output_file;
+    size_t rotations = 10;
+    size_t attempts = 10;
+};
 
+struct InputData {
+    InputData(const Arguments& arguments);
+
+    Arguments arguments;
     size_t simulation_time;
     size_t intersections_num;
     size_t streets_num;

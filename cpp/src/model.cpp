@@ -10,8 +10,15 @@
 namespace hashcode
 {
 
-InputData::InputData(const std::string& file_name) {
-    std::ifstream input(file_name);
+InputData::InputData(const Arguments& arguments)
+  : arguments(arguments)
+{
+    std::cout << "Input file: " << arguments.input_file << std::endl;
+    std::cout << "Output file: " << arguments.output_file << std::endl;
+    std::cout << "Attempts: " << arguments.attempts << std::endl;
+    std::cout << "Rotations: " << arguments.rotations << std::endl;
+
+    std::ifstream input(arguments.input_file);
     input >> simulation_time;
     input >> intersections_num;
     input >> streets_num;
