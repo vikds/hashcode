@@ -23,6 +23,7 @@ Signaling Solution::GetBestSignaling() {
     size_t score = 0;
     size_t best_score = 0;
     size_t iterations = 0;
+    size_t update_iteration = 0;
     Signaling best_signaling;
     Timer solution_timer("Get the best result timing");
     std::cout << "Starting with signaling score: " << best_score << std::endl;
@@ -35,8 +36,13 @@ Signaling Solution::GetBestSignaling() {
         std::cout << DIVIDING_LINE << std::endl; 
         score = Simulator::Run(model, best_signaling, std::to_string(attempt));
         size_t index = best_signaling.GetNthWorstTrafficLightIndex(model, attempt);
+        iterations++;
         if (score > best_score) {
-            std::cout << "Achieved better score: " << score << std::endl;
+            std::cout << "Better score: " << score << std::endl;
+            if (++update_iteration >= 10) {
+                best_signaling.SaveToFile(input_data_);
+                update_iteration = 0;
+            }
             best_score = score;
             attempt = 0;
         }
@@ -59,6 +65,10 @@ Signaling Solution::GetBestSignaling() {
                 best_signaling = signaling;
                 score_updated = true;
                 best_score = score;
+                if (++update_iteration >= 10) {
+                    best_signaling.SaveToFile(input_data_);
+                    update_iteration = 0;
+                }
             }
         }
         // run main thread[0]
@@ -66,8 +76,6 @@ Signaling Solution::GetBestSignaling() {
             attempt = 0;
             continue;
         }
-        iterations++;
-        model.Reset();
         TrafficLight& worst_traffic_light = best_signaling.traffic_lights[index];
         size_t street_id = worst_traffic_light.IncrWorstStreetDuration(model);
         if (street_id < MAX_VALUE) {

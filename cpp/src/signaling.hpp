@@ -9,7 +9,7 @@ namespace hashcode
 
 class Signaling {
 public:
-    void SaveToFile(const InputData& input_data, const std::string& file_name);
+    void SaveToFile(const InputData& input_data);
     size_t GetNthWorstTrafficLightIndex(const Model& model, size_t nth);
 
 private:

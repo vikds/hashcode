@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
         InputData input_data(args);
         Solution solution(input_data);
         Signaling best_signaling = solution.GetBestSignaling();
-        best_signaling.SaveToFile(input_data, args.output_file);
+        best_signaling.SaveToFile(input_data);
 
     } catch(const std::exception& ex) {
         return EXIT_FAILURE;

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <fstream>
 #include <limits>
+#include <unistd.h>
 
 #include "fwd.hpp"
 #include "intersection.hpp"
@@ -13,8 +14,19 @@
 namespace hashcode
 {
 
-void Signaling::SaveToFile(const InputData& input_data, const std::string& file_name) {
-    std::ofstream output(file_name);
+bool file_exist(const std::string& file_name) {
+  return access(file_name.c_str(), F_OK) != -1;
+}
+
+bool delete_file(const std::string& file_name) {
+    return unlink(file_name.c_str()) != -1;
+}
+
+void Signaling::SaveToFile(const InputData& input_data) {
+    if (file_exist(input_data.arguments.output_file)) {
+        delete_file(input_data.arguments.output_file);
+    }
+    std::ofstream output(input_data.arguments.output_file);
     output << CountScheduledTrafficLights() << std::endl;
     for (const TrafficLight& traffic_light : traffic_lights) {
         if (traffic_light.scheduled_streets() == 0) {
