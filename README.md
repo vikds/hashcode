@@ -8,7 +8,6 @@ We've taken part in solving Online Qualiffications of Hash Code 2021 problem `"T
 
 1. [cmake](https://cmake.org/) >= 2.7
 2. [C++17](https://en.wikipedia.org/wiki/C%2B%2B17)
-3. [OMP](https://en.wikipedia.org/wiki/OpenMP) (intended to be used)
 
 ## Build C++ code
 
@@ -31,21 +30,24 @@ Usage: ./hashcode [-io] [-i input][-o output] ...
 
 
 ```bash
-$ ./hashcode --input=../../input/a.txt --output=../results/a.txt
+$ ./hashcode --input=../../input/a.txt \
+             --output=../results/a.txt \
+             --attempts=100 \
+             --rotations=100
 ```
 
 ## C++ results
 
-|   | Name | Score |
-| - | - | - |
-| 1 | A – An example | 2 002 |
-| 2 | B – By the ocean | 4 566 625 |
-| 3 | C – Checkmate | 1 299 034 |
-| 4 | D – Daily commute | 1 567 509 |
-| 5 | E – Etoile | 705 971 |
-| 6 | F – Forever jammed | 780 765 |
+|   | Name | Score | Attempts | Rotations | Iterations | Simulation cycle |
+| - | - | - | - | - | - | - |
+| 1 | A – An example | 2 002 | 100 | 100 | 1 | 0 ms |
+| 2 | B – By the ocean | 4 566 903 | 100 | 100 | 817 | 1988 ms |
+| 3 | C – Checkmate | 1 299 543 | 100 | 100 | 402 | 2045 ms |
+| 4 | D – Daily commute | 1 567 509 | 100 | 100 |  - | 30 sec |
+| 5 | E – Etoile | 708 059 | 100 | 100 | 732 | 55 ms |
+| 6 | F – Forever jammed | 1 239 637 | 100 | 0 | 897 | 776 ms |
 
-    Total: 9,496,277 points
+    Total: 9 383 653 points
 
 ## Building C# code
 [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) is required to build C# code located in `./csharp` folder. It's a completely separated version of the solution and not related in any way to a C++ code.
