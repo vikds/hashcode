@@ -7,6 +7,7 @@ set(SOURCES
     src/intersection.cpp
     src/main.cpp
     src/model.cpp
+    src/random_generator.cpp
     src/signaling.cpp
     src/simulator.cpp
     src/solution.cpp

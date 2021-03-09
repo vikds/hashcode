@@ -23,7 +23,6 @@ Signaling Solution::GetBestSignaling() {
     size_t score = 0;
     size_t best_score = 0;
     size_t iterations = 0;
-    size_t update_iteration = 0;
     Signaling best_signaling;
     Timer solution_timer("Get the best result timing");
     std::cout << "Starting with signaling score: " << best_score << std::endl;
@@ -40,11 +39,8 @@ Signaling Solution::GetBestSignaling() {
         if (score > best_score) {
             best_score = score;
             attempt = 0;
-            std::cout << "Better score: " << score << " (" << ++update_iteration << ")" << std::endl;
-            if (update_iteration >= 10) {
-                best_signaling.SaveToFile(input_data_);
-                update_iteration = 0;
-            }
+            std::cout << "Better score: " << best_score << std::endl;
+            best_signaling.SaveToFile(input_data_, best_score);
         }
         if (index >= best_signaling.traffic_lights.size()) {
             std::cout << DIVIDING_LINE << std::endl; 
@@ -58,17 +54,18 @@ Signaling Solution::GetBestSignaling() {
         for (size_t rotation = 1; rotation < std::min(rotations, schedule_size); rotation++, iterations++) {
             Signaling signaling = best_signaling;
             Schedule& worst_schedule = signaling.traffic_lights[index].schedule;
-            std::rotate(worst_schedule.begin(), worst_schedule.begin() + rotation, worst_schedule.end());
+            if (model.seed()) {
+                std::shuffle(worst_schedule.begin(), worst_schedule.end(), model.random_generator);
+            } else {
+                std::rotate(worst_schedule.begin(), worst_schedule.begin() + rotation, worst_schedule.end());
+            }
             score = Simulator::Run(model, signaling, std::string("Schedule rotation ") + std::to_string(rotation));
             if (score > best_score) {
                 best_signaling = signaling;
                 score_updated = true;
                 best_score = score;
-                std::cout << "Better score: " << score << " (" << ++update_iteration << ")" << std::endl;
-                if (update_iteration >= 10) {
-                    best_signaling.SaveToFile(input_data_);
-                    update_iteration = 0;
-                }
+                std::cout << "Better score: " << best_score << std::endl;
+                best_signaling.SaveToFile(input_data_, best_score);
             }
         }
         // run main thread[0]

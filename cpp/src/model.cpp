@@ -17,6 +17,7 @@ InputData::InputData(const Arguments& arguments)
     std::cout << "Output file: " << arguments.output_file << std::endl;
     std::cout << "Attempts: " << arguments.attempts << std::endl;
     std::cout << "Rotations: " << arguments.rotations << std::endl;
+    std::cout << "Seed: " << arguments.seed << std::endl;
 
     std::ifstream input(arguments.input_file);
     input >> simulation_time;
@@ -61,7 +62,8 @@ InputData::InputData(const Arguments& arguments)
 }
 
 Model::Model(const InputData& input_data)
-  : input_data_(input_data)
+  : random_generator(0, input_data.streets_num, input_data.arguments.seed),
+    input_data_(input_data)
 {
     intersections.reserve(input_data_.intersections_num);
     for (size_t id = 0; id < input_data_.intersections_num; id++) {

@@ -15,6 +15,7 @@ void Usage(const char* binary_name) {
     std::cerr << "\t-o|--output (required): output file" << std::endl;
     std::cerr << "\t-a|--attempts: attempts to improve result (default: 10)" << std::endl;
     std::cerr << "\t-r|--rotations: schedule rotations to improve result (default: 10)" << std::endl;
+    std::cerr << "\t-s|--seed: random number generator seed to improve result (default: 0)" << std::endl;
     std::cerr << "\t-h|--help: show this usage" << std::endl;
     std::exit(EX_USAGE);
 }
@@ -26,6 +27,7 @@ Arguments ParseArguments(int argc, char* argv[]) {
         { "output", required_argument, nullptr, 'o' },
         { "attempts", required_argument, nullptr, 'a' },
         { "rotations", required_argument, nullptr, 'r' },
+        { "seed", required_argument, nullptr, 's' },
         { "help", no_argument, nullptr, 'h' },
         { nullptr, 0, nullptr, 0 }
     };
@@ -44,6 +46,9 @@ Arguments ParseArguments(int argc, char* argv[]) {
                 break;
             case 'r':
                 arguments.rotations = std::atoi(optarg);
+                break;
+            case 's':
+                arguments.seed = std::atoi(optarg);
                 break;
             case 'h':
                 Usage(binary_name);

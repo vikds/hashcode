@@ -22,12 +22,19 @@ bool delete_file(const std::string& file_name) {
     return unlink(file_name.c_str()) != -1;
 }
 
-void Signaling::SaveToFile(const InputData& input_data) {
-    if (file_exist(input_data.arguments.output_file)) {
-        delete_file(input_data.arguments.output_file);
+void Signaling::SaveToFile(const InputData& input_data, size_t score) {
+    std::string file_path = input_data.arguments.output_file;
+    if (score > 0) {
+        size_t last_dot_index = file_path.find_last_of(".");
+        std::string file_name = file_path.substr(0, last_dot_index);
+        std::string extension = file_path.substr(last_dot_index);
+        file_path = file_name + "." + std::to_string(score) + extension;
     }
-    std::cout << "Saving result into: " << input_data.arguments.output_file << std::endl;
-    std::ofstream output(input_data.arguments.output_file);
+    if (file_exist(file_path)) {
+        delete_file(file_path);
+    }
+    std::cout << "Saving result into: " << file_path << std::endl;
+    std::ofstream output(file_path);
     output << CountScheduledTrafficLights() << std::endl;
     for (const TrafficLight& traffic_light : traffic_lights) {
         if (traffic_light.scheduled_streets() == 0) {

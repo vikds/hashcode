@@ -4,6 +4,7 @@
 
 #include "car.hpp"
 #include "intersection.hpp"
+#include "random_generator.hpp"
 #include "street.hpp"
 
 namespace hashcode
@@ -14,6 +15,7 @@ struct Arguments {
     std::string output_file;
     size_t rotations = 10;
     size_t attempts = 10;
+    size_t seed = 0;
 };
 
 struct InputData {
@@ -49,6 +51,9 @@ public:
     size_t finish_bonus() const {
         return input_data_.finish_bonus;
     }
+    size_t seed() const {
+        return input_data_.arguments.seed;
+    }
 
     void Reset();
     void CountCarsExpectedOnTheStreets();
@@ -60,6 +65,7 @@ public:
     std::vector<Car> cars;
     std::vector<Intersection> intersections;
     std::vector<Street> streets;
+    RandomGenerator random_generator;
 
 private:
     const InputData& input_data_;

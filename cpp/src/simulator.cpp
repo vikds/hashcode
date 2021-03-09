@@ -27,7 +27,7 @@ private:
 };
 
 void Simulator::InitializeTrafficLights(Model& model, Signaling& signaling) {
-    Timer init_timer("Simulator initalizing");
+    Timer inititialize_timer("Simulator initalizing");
     model.CountCarsExpectedOnTheStreets();
     for (Intersection& intersection : model.intersections) {
         Schedule schedule;
@@ -35,13 +35,20 @@ void Simulator::InitializeTrafficLights(Model& model, Signaling& signaling) {
             if (street.cars_expected == 0) {
                 continue;
             }
-            schedule.push_back(ProceedSignal(street.id(), 1));
+            if (model.seed()) {
+                schedule.push_back(ProceedSignal(street.id(), model.random_generator.GetNextInt() % 2));
+            } else {
+                schedule.push_back(ProceedSignal(street.id(), 1));
+            }
         }
         if (schedule.empty()) {
             continue;
         }
         std::sort(schedule.begin(), schedule.end(), CarsOnStreetOrExpectedGreater(model));
         TrafficLight traffic_light(intersection.id(), schedule);
+        if (traffic_light.scheduled_streets() == 0) {
+            schedule.front().duration = 1;
+        }
         signaling.traffic_lights.push_back(traffic_light);
     }
 }
@@ -51,8 +58,8 @@ size_t Simulator::Run(Model& model, Signaling& signaling, const std::string& inf
     if (!info.empty()) {
         message += ": " + info;
     }
-    Timer rotation_timer(message);
     model.Reset();
+    Timer simulation_timer(message);
     for (TrafficLight& traffic_light : signaling.traffic_lights) {
         traffic_light.Reset(model);
     }
