@@ -39,7 +39,7 @@ $ ./hashcode --input=../../input/a.txt \
 ## C++ results
 
 |   | Name | Score | Simulation cycle |
-| - | - | - | - | - | - | - |
+| - | - | - | - |
 | 1 | A – An example | 2 002 | 0 ms |
 | 2 | B – By the ocean | 4 566 968 | 1988 ms |
 | 3 | C – Checkmate | 1 299 483 | 2045 ms |
