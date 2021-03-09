@@ -35,11 +35,10 @@ void Simulator::InitializeTrafficLights(Model& model, Signaling& signaling) {
             if (street.cars_expected == 0) {
                 continue;
             }
-            if (model.seed()) {
-                schedule.push_back(ProceedSignal(street.id(), model.random_generator.GetNextInt() % 2));
-            } else {
-                schedule.push_back(ProceedSignal(street.id(), 1));
-            }
+            // if (model.seed()) {
+            //     schedule.push_back(ProceedSignal(street.id(), model.random_generator.GetNextInt() % 2));
+            // }
+            schedule.push_back(ProceedSignal(street.id(), 1));
         }
         if (schedule.empty()) {
             continue;
