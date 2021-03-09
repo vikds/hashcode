@@ -91,8 +91,8 @@ $ dotnet run -i input.txt -o ./output
 | 1 | A – An example | 2 000 |
 | 2 | B – By the ocean | 4 565 916 |
 | 3 | C – Checkmate | 1 242 070 |
-| 4 | D – Daily commute | TBP |
+| 4 | D – Daily commute | 969 685 |
 | 5 | E – Etoile | 697 648 |
 | 6 | F – Forever jammed | 1 196 271 |
 
-    Total: TBP
+    Total: 8 673 590
