@@ -26,6 +26,7 @@ void Signaling::SaveToFile(const InputData& input_data) {
     if (file_exist(input_data.arguments.output_file)) {
         delete_file(input_data.arguments.output_file);
     }
+    std::cout << "Saving result into: " << input_data.arguments.output_file << std::endl;
     std::ofstream output(input_data.arguments.output_file);
     output << CountScheduledTrafficLights() << std::endl;
     for (const TrafficLight& traffic_light : traffic_lights) {

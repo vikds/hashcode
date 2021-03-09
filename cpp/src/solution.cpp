@@ -38,18 +38,18 @@ Signaling Solution::GetBestSignaling() {
         size_t index = best_signaling.GetNthWorstTrafficLightIndex(model, attempt);
         iterations++;
         if (score > best_score) {
-            std::cout << "Better score: " << score << std::endl;
-            if (++update_iteration >= 10) {
+            best_score = score;
+            attempt = 0;
+            std::cout << "Better score: " << score << " (" << ++update_iteration << ")" << std::endl;
+            if (update_iteration >= 10) {
                 best_signaling.SaveToFile(input_data_);
                 update_iteration = 0;
             }
-            best_score = score;
-            attempt = 0;
         }
         if (index >= best_signaling.traffic_lights.size()) {
             std::cout << DIVIDING_LINE << std::endl; 
             std::cout << "FINAL SCORE: " << best_score << std::endl;
-            std::cout << DIVIDING_LINE << std::endl; 
+            std::cout << DIVIDING_LINE << std::endl;
             break;
         }
         bool score_updated = false;
@@ -61,11 +61,11 @@ Signaling Solution::GetBestSignaling() {
             std::rotate(worst_schedule.begin(), worst_schedule.begin() + rotation, worst_schedule.end());
             score = Simulator::Run(model, signaling, std::string("Schedule rotation ") + std::to_string(rotation));
             if (score > best_score) {
-                std::cout << "Better score: " << score << std::endl;
                 best_signaling = signaling;
                 score_updated = true;
                 best_score = score;
-                if (++update_iteration >= 10) {
+                std::cout << "Better score: " << score << " (" << ++update_iteration << ")" << std::endl;
+                if (update_iteration >= 10) {
                     best_signaling.SaveToFile(input_data_);
                     update_iteration = 0;
                 }
