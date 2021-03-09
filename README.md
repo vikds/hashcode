@@ -6,7 +6,7 @@ We've taken part in solving Online Qualiffications of Hash Code 2021 problem `"T
 
 ## Results 
 
-![Results](results.jpg "Results")
+![Results](https://github.com/vikds/hashcode/results.png)
 
 ## C++ requirements
 
