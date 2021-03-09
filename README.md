@@ -43,11 +43,11 @@ $ ./hashcode --input=../../input/a.txt \
 | 1 | A – An example | 2 002 | 100 | 100 | 1 | 0 ms |
 | 2 | B – By the ocean | 4 566 903 | 100 | 100 | 817 | 1988 ms |
 | 3 | C – Checkmate | 1 299 543 | 100 | 100 | 402 | 2045 ms |
-| 4 | D – Daily commute | 1 567 509 | 100 | 100 |  - | 30 sec |
+| 4 | D – Daily commute | 1 601 551 | 100 | 100 |  - | 30 sec |
 | 5 | E – Etoile | 708 059 | 100 | 100 | 732 | 55 ms |
 | 6 | F – Forever jammed | 1 239 637 | 100 | 0 | 897 | 776 ms |
 
-    Total: 9 383 653 points
+    Total: 9 417 695 points
 
 ## Building C# code
 [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) is required to build C# code located in `./csharp` folder. It's a completely separated version of the solution and not related in any way to a C++ code.
