@@ -48,7 +48,7 @@ Signaling Solution::GetBestSignaling() {
         bool score_updated = false;
         size_t schedule_size = best_signaling.traffic_lights[index].schedule.size();
         // rotation can be paralleled for different model[thread]: OMP?
-        for (size_t rotation = 1; rotation < schedule_size; rotation++, iterations++) {
+        for (size_t rotation = 1; rotation < std::min(attempts_, schedule_size); rotation++, iterations++) {
             Signaling signaling = best_signaling;
             Schedule& worst_schedule = signaling.traffic_lights[index].schedule;
             std::rotate(worst_schedule.begin(), worst_schedule.begin() + rotation, worst_schedule.end());
