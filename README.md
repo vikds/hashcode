@@ -39,7 +39,7 @@ $ ./hashcode --input=../../input/a.txt \
 ## C++ results
 
 |   | Name | Score | Simulation cycle |
-| - | - | - | - | - | - | - |
+| - | - | - | - |
 | 1 | A – An example | 2 002 | 0 ms |
 | 2 | B – By the ocean | 4 566 968 | 1988 ms |
 | 3 | C – Checkmate | 1 299 483 | 2045 ms |
@@ -47,7 +47,7 @@ $ ./hashcode --input=../../input/a.txt \
 | 5 | E – Etoile | 707 376 | 55 ms |
 | 6 | F – Forever jammed | 1 392 887 | 776 ms |
 
-    Total: 9 417 695 points
+    Total: 9 574 375 points
 
 ## Building C# code
 [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) is required to build C# code located in `./csharp` folder. It's a completely separated version of the solution and not related in any way to a C++ code.
@@ -91,8 +91,8 @@ $ dotnet run -i input.txt -o ./output
 | 1 | A – An example | 2 000 |
 | 2 | B – By the ocean | 4 565 916 |
 | 3 | C – Checkmate | 1 242 070 |
-| 4 | D – Daily commute | TBP |
+| 4 | D – Daily commute | 969 685 |
 | 5 | E – Etoile | 697 648 |
 | 6 | F – Forever jammed | 1 196 271 |
 
-    Total: TBP
+    Total: 8 673 590

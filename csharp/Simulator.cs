@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 
 namespace HashCode {
     class Simulator {
@@ -12,13 +13,19 @@ namespace HashCode {
 
         private readonly Model _model;
         private readonly Schedule _schedule;
-        private readonly Dictionary<string, int> _jam = new();
+        private readonly Dictionary<string, int> _streetsWhereCarsStuck = new();
+        private readonly HashSet<string> _streetsWhereCarsPassed = new();
+
         private Tuple<string, int> longestJam = new("", int.MinValue);
 
         public Model RunSimulation(out long elapsedMs) {
+            return RunSimulation(CancellationToken.None, out elapsedMs);
+        }
+        public Model RunSimulation(CancellationToken token, out long elapsedMs) {
             var simulationWatch = Stopwatch.StartNew();
             var freshModel = _model.Clone();
-            _jam.Clear();
+            _streetsWhereCarsStuck.Clear();
+            _streetsWhereCarsPassed.Clear();
 
             Logger.Debug("Configuring traffic lights.");
             _schedule.ApplyToModel(freshModel);
@@ -36,6 +43,7 @@ namespace HashCode {
             Logger.Debug("Running simulation.");
             Logger.Divider();
             for (var timer = 0; timer <= freshModel.Duration; timer++) {
+                if (token != CancellationToken.None) token.ThrowIfCancellationRequested();
                 Logger.Debug($"Timer is {timer} >>>>>>>>>>>");
 
                 // deal with traffic lights
@@ -62,14 +70,16 @@ namespace HashCode {
                         continue;
                     }
                     // var prevStreet = car.CurrentStreet;
+                    _streetsWhereCarsPassed.Add(car.CurrentStreet.Name);
+
                     var movementState = car.Move();
                     switch (movementState) {
                         case Car.MoveResult.WaitingInTheLine:
                         case Car.MoveResult.WaitingAtRed:
-                            if (!_jam.ContainsKey(car.CurrentStreet.Name)) {
-                                _jam[car.CurrentStreet.Name] = 0;
+                            if (!_streetsWhereCarsStuck.ContainsKey(car.CurrentStreet.Name)) {
+                                _streetsWhereCarsStuck[car.CurrentStreet.Name] = 0;
                             }
-                            _jam[car.CurrentStreet.Name] += 1;
+                            _streetsWhereCarsStuck[car.CurrentStreet.Name] += 1;
                             break;
                         case Car.MoveResult.PassedOnGreen:
                         case Car.MoveResult.StreetMovement:
@@ -117,10 +127,16 @@ namespace HashCode {
         public void UpdateSchedule() {
             // _schedule.DataMap[longestJam.Item1].GreenDuration += 1;
 
-            if (_jam.Count == 0) return;
+            if (_streetsWhereCarsStuck.Count == 0) return;
 
-            foreach (var kvp in _jam.OrderByDescending(j => j.Value).Take(Math.Max(_jam.Count / 20, 2))) { //_jam.Count / 20)) {
+            foreach (var kvp in _streetsWhereCarsStuck.OrderByDescending(j => j.Value).Take(Math.Max(_streetsWhereCarsStuck.Count / 20, 2))) { //_jam.Count / 20)) {
                 _schedule.DataMap[kvp.Key].GreenDuration += 1;
+            }
+
+            foreach (var record in _schedule.Data) {
+                if (!_streetsWhereCarsPassed.Contains(record.StreetName)) {
+                    if (record.GreenDuration > 0) record.GreenDuration -= 1;
+                }
             }
 
             // var maxJamLength = int.MinValue;
