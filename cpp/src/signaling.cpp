@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <fstream>
 #include <limits>
+#include <iomanip>
 #include <unistd.h>
 
 #include "fwd.hpp"
@@ -28,7 +29,9 @@ void Signaling::SaveToFile(const InputData& input_data, size_t score) {
         size_t last_dot_index = file_path.find_last_of(".");
         std::string file_name = file_path.substr(0, last_dot_index);
         std::string extension = file_path.substr(last_dot_index);
-        file_path = file_name + "." + std::to_string(score) + extension;
+        std::ostringstream oss;
+        oss << std::setfill('0') << std::setw(7) << score;
+        file_path = file_name + "." + oss.str() + extension;
     }
     if (file_exist(file_path)) {
         delete_file(file_path);
