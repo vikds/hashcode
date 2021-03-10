@@ -12,11 +12,11 @@ One more attempt...
 
 ![all](all.png "All")
 
-We are 190/2060 in Extended Run
+We are `190/2060` in Extended Run
 
 ![russia](russia.png "Russia")
 
-And we are 12/58 in Russia
+And we are `12/58` in Russia
 
 ## C++ requirements
 

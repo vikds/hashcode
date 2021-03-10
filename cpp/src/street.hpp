@@ -28,6 +28,7 @@ public:
     std::deque<CarRef> cars;
     size_t cars_expected = 0;
     size_t time_wasted = 0;
+    size_t cars_passed = 0;
     bool car_passed = false;
     bool is_green = false;
 

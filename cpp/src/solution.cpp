@@ -51,7 +51,8 @@ Signaling Solution::GetBestSignaling() {
         bool score_updated = false;
         // rotation can be paralleled for different model[thread]: OMP?
         size_t schedule_size = best_signaling.traffic_lights[index].schedule.size();
-        for (size_t rotation = 1; rotation < std::min(rotations, schedule_size); rotation++, iterations++) {
+        size_t max_rotations = model.seed() ? rotations : std::min(rotations, schedule_size);
+        for (size_t rotation = 1; rotation < max_rotations; rotation++, iterations++) {
             Signaling signaling = best_signaling;
             Schedule& worst_schedule = signaling.traffic_lights[index].schedule;
             if (model.seed()) {
@@ -74,6 +75,12 @@ Signaling Solution::GetBestSignaling() {
             continue;
         }
         TrafficLight& worst_traffic_light = best_signaling.traffic_lights[index];
+        size_t decreased_streets = worst_traffic_light.DecrBlockedStreetsDuration(model);
+        if (decreased_streets > 0) {
+            std::cout << "Decreased duration for " << decreased_streets << " streets" << std::endl;
+            attempt = 0;
+            continue;
+        }
         size_t street_id = worst_traffic_light.IncrWorstStreetDuration(model);
         if (street_id < MAX_VALUE) {
             std::cout << "Increased duration for street: " << input_data_.streets[street_id].name << std::endl;
