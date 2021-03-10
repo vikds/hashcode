@@ -57,6 +57,9 @@ std::vector<size_t> TrafficLight::DecrFreeStreetsDuration(Model& model) {
 size_t TrafficLight::DecrFreeStreetDuration(Model& model) {
     auto it = std::min_element(schedule.begin(), schedule.end(),
         [&] (const ProceedSignal& lhs, const ProceedSignal& rhs) {
+            if (model.streets[lhs.street_id].time_wasted == model.streets[rhs.street_id].time_wasted) {
+                return model.streets[lhs.street_id].car_passed < model.streets[rhs.street_id].car_passed;
+            }
             return model.streets[lhs.street_id].time_wasted < model.streets[rhs.street_id].time_wasted;
         }
     );
@@ -64,6 +67,9 @@ size_t TrafficLight::DecrFreeStreetDuration(Model& model) {
         return std::numeric_limits<size_t>::max();
     }
     ProceedSignal& signal = *it;
+    if (signal.duration == 0) {
+        return std::numeric_limits<size_t>::max();
+    }
     signal.duration--;
     return signal.street_id;
 }
