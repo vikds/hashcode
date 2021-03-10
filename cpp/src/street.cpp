@@ -15,6 +15,7 @@ Street::Street(size_t id, Intersection& intersection, size_t travel_time)
 
 void Street::Reset() {
     cars.clear();
+    cars_passed = 0;
     cars_expected = 0;
     time_wasted = 0;
     car_passed = false;
