@@ -46,7 +46,7 @@ std::vector<size_t> TrafficLight::DecrFreeStreetsDuration(Model& model) {
         if (signal.duration == 0) {
             continue;
         }
-        if (model.streets[signal.street_id].time_wasted == 0) {
+        if (model.streets[signal.street_id].time_wasted == 0 && model.streets[signal.street_id].car_passed == 0) {
             decreased_streets.push_back(signal.street_id);
             signal.duration--;
         }
