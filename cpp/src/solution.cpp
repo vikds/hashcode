@@ -82,8 +82,9 @@ Signaling Solution::GetBestSignaling() {
                 if (i) {
                     std::cout << ", ";
                 }
-                std::cout << input_data_.streets[street_id].name << std::endl;
+                std::cout << input_data_.streets[street_id].name;
             }
+            std::cout << std::endl;
             attempt++;
             continue;
         }
