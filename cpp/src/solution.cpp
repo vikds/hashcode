@@ -88,7 +88,7 @@ Signaling Solution::GetBestSignaling() {
             attempt++;
             continue;
         }
-        bool increase = model.seed() ? model.random_generator.GetNextReal() < 0.50 : attempt % 2;
+        bool increase = true; // model.seed() ? model.random_generator.GetNextReal() < 0.50 : attempt % 2;
         size_t street_id = increase ? worst_traffic_light.IncrWorstStreetDuration(model) : worst_traffic_light.DecrFreeStreetDuration(model);
         if (street_id < MAX_VALUE) {
             std::cout << "Changed duration for street: " << input_data_.streets[street_id].name << std::endl;
