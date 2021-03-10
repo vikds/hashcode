@@ -40,7 +40,6 @@ void Car::Turn(size_t time) {
     Street& curr_street = path_[position_];
     curr_street.cars.pop_front();
     curr_street.car_passed = true;
-    curr_street.cars_passed++;
     position_++;
     if (has_finished()) {
         finish_time_ = time;

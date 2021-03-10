@@ -29,13 +29,12 @@ Signaling Solution::GetBestSignaling() {
     Simulator::InitializeTrafficLights(model, best_signaling); // run on treads[0]?
     size_t attempts = input_data_.arguments.attempts;
     size_t rotations = input_data_.arguments.rotations;
-    for (size_t attempt = 0; attempt < attempts;) { // attempt = nth worst element
+    for (size_t attempt = 0; attempt < attempts; iterations++) { // attempt = nth worst element
         std::cout << DIVIDING_LINE << std::endl;
         std::cout << "CURRENT SCORE " << best_score << " (attempt: " << attempt << ")" << std::endl << std::flush;
         std::cout << DIVIDING_LINE << std::endl; 
         score = Simulator::Run(model, best_signaling, std::to_string(attempt));
         size_t index = best_signaling.GetNthWorstTrafficLightIndex(model, attempt);
-        iterations++;
         if (score > best_score) {
             best_score = score;
             attempt = 0;
@@ -75,15 +74,24 @@ Signaling Solution::GetBestSignaling() {
             continue;
         }
         TrafficLight& worst_traffic_light = best_signaling.traffic_lights[index];
-        size_t decreased_streets = worst_traffic_light.DecrBlockedStreetsDuration(model);
-        if (decreased_streets > 0) {
-            std::cout << "Decreased duration for " << decreased_streets << " streets" << std::endl;
-            attempt = 0;
+        std::vector<size_t> decreased_streets = worst_traffic_light.DecrFreeStreetsDuration(model);
+        if (!decreased_streets.empty()) {
+            std::cout << "Decreased duration for streets: ";
+            for (size_t i = 0; i < decreased_streets.size(); i++) {
+                size_t street_id = decreased_streets[i];
+                if (i) {
+                    std::cout << ", ";
+                }
+                std::cout << input_data_.streets[street_id].name << std::endl;
+            }
+            attempt++;
             continue;
         }
         size_t street_id = worst_traffic_light.IncrWorstStreetDuration(model);
         if (street_id < MAX_VALUE) {
             std::cout << "Increased duration for street: " << input_data_.streets[street_id].name << std::endl;
+            attempt++;
+            continue;
         }
         attempt++;
     }
