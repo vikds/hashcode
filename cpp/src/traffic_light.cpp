@@ -67,7 +67,7 @@ size_t TrafficLight::DecrFreeStreetDuration(Model& model) {
         return std::numeric_limits<size_t>::max();
     }
     ProceedSignal& signal = *it;
-    if (signal.duration == 0) {
+    if (signal.duration == 0 || model.streets[signal.street_id].car_passed > 0) {
         return std::numeric_limits<size_t>::max();
     }
     signal.duration--;
