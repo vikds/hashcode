@@ -52,14 +52,14 @@ $ ./hashcode --input=../../input/a.txt \
 
 ## C++ results
 
-|   | Name | Score | Simulation cycle |
-| - | - | - | - |
-| 1 | A – An example | 2 002 | 0 ms |
-| 2 | B – By the ocean | 4 567 082 | 1988 ms |
-| 3 | C – Checkmate | 1 300 268 | 2045 ms |
-| 4 | D – Daily commute | 1 612 370 | 30 sec |
-| 5 | E – Etoile | 709 460 | 55 ms |
-| 6 | F – Forever jammed | 1 393 854 | 776 ms |
+|   | Name | Score |
+| - | - | - |
+| 1 | A – An example | 2 002 |
+| 2 | B – By the ocean | 4 567 082 |
+| 3 | C – Checkmate | 1 300 268 |
+| 4 | D – Daily commute | 1 612 370 |
+| 5 | E – Etoile | 709 460 |
+| 6 | F – Forever jammed | 1 393 854 |
 
     Total: 9 585 036 points
 
