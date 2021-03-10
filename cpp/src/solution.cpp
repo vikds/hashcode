@@ -84,14 +84,10 @@ Signaling Solution::GetBestSignaling() {
                 }
                 std::cout << input_data_.streets[street_id].name << std::endl;
             }
-            attempt++;
-            continue;
         }
         size_t street_id = worst_traffic_light.IncrWorstStreetDuration(model);
         if (street_id < MAX_VALUE) {
             std::cout << "Increased duration for street: " << input_data_.streets[street_id].name << std::endl;
-            attempt++;
-            continue;
         }
         attempt++;
     }
