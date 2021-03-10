@@ -4,6 +4,20 @@
 
 We've taken part in solving Online Qualiffications of Hash Code 2021 problem `"Traffic signaling"` for the first time. Our result was `8,446,233` points, while the best score was `10,586,135`. We would like to improve our result, and even arrange a small competition between ourselves. That's all just for fun.
 
+## Results 
+
+![results](results.png "Results")
+
+One more attempt...
+
+![all](all.png "All")
+
+We are 190/2060 in Extended Run
+
+![russia](russia.png "Russia")
+
+And we are 12/58 in Russia
+
 ## C++ requirements
 
 1. [cmake](https://cmake.org/) >= 2.7
@@ -41,13 +55,13 @@ $ ./hashcode --input=../../input/a.txt \
 |   | Name | Score | Simulation cycle |
 | - | - | - | - |
 | 1 | A – An example | 2 002 | 0 ms |
-| 2 | B – By the ocean | 4 566 968 | 1988 ms |
-| 3 | C – Checkmate | 1 299 483 | 2045 ms |
-| 4 | D – Daily commute | 1 605 659 | 30 sec |
-| 5 | E – Etoile | 707 376 | 55 ms |
-| 6 | F – Forever jammed | 1 392 887 | 776 ms |
+| 2 | B – By the ocean | 4 567 082 | 1988 ms |
+| 3 | C – Checkmate | 1 300 268 | 2045 ms |
+| 4 | D – Daily commute | 1 612 370 | 30 sec |
+| 5 | E – Etoile | 709 460 | 55 ms |
+| 6 | F – Forever jammed | 1 393 854 | 776 ms |
 
-    Total: 9 574 375 points
+    Total: 9 585 036 points
 
 ## Building C# code
 [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) is required to build C# code located in `./csharp` folder. It's a completely separated version of the solution and not related in any way to a C++ code.
