@@ -10,7 +10,7 @@ We've taken part in solving Online Qualiffications of Hash Code 2021 problem `"T
 
 One more attempt...
 
-![all](results.png "All")
+![all](all.png "All")
 
 We are 190/2060 in Extended Run
 
