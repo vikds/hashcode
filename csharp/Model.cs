@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace HashCode {
             Duration = duration;
             Bonus = bonus;
             Intersections = new Intersection[intersectionsNum];
-            for (int i = 0; i < Intersections.Length; i++) {
+            for (var i = 0; i < Intersections.Length; i++) {
                 Intersections[i] = new Intersection() {
                     Id = i,
                     Incoming = new List<Street>(streetsNum),
@@ -21,19 +22,19 @@ namespace HashCode {
 
         }
 
-        public int Duration;
-        public Intersection[] Intersections;
-        public Street[] Streets;
-        public Dictionary<string, Street> StreetMap = new();
-        public Car[] Cars;
-        public int Bonus;
+        public readonly int Duration;
+        public readonly Intersection[] Intersections;
+        public readonly Street[] Streets;
+        public readonly Dictionary<string, Street> StreetMap = new();
+        public readonly Car[] Cars;
+        public readonly int Bonus;
         public int Score;
 
         public string ExportSchedule() {
             var sb = new StringBuilder();
             var intersections = Intersections
-                    .Where(i => i.TrafficLights != null && i.TrafficLights.Count > 0)
-                    .ToArray();
+                .Where(i => i.TrafficLights != null && i.TrafficLights.Count > 0)
+                .ToArray();
 
             sb.Append(intersections.Length);
             foreach (var i in intersections) {
@@ -58,24 +59,29 @@ namespace HashCode {
             );
 
             for (var i = 0; i < clone.Streets.Length; i++) {
-                clone.Streets[i] = new Street() {
-                    StartsAt = clone.Intersections[Streets[i].StartsAt.Id],
-                    EndsAt = clone.Intersections[Streets[i].EndsAt.Id],
-                    Name = Streets[i].Name,
-                    Length = Streets[i].Length,
+                var street = Streets[i];
+                var clonedStreet = new Street() {
+                    StartsAt = clone.Intersections[street.StartsAt.Id],
+                    EndsAt = clone.Intersections[street.EndsAt.Id],
+                    Name = street.Name,
+                    Length = street.Length,
                 };
-                clone.StreetMap[clone.Streets[i].Name] = clone.Streets[i];
-                clone.Streets[i].StartsAt.Outcoming.Add(clone.Streets[i]);
-                clone.Streets[i].EndsAt.Incoming.Add(clone.Streets[i]);
+                clone.StreetMap[clonedStreet.Name] = clonedStreet;
+                clonedStreet.StartsAt.Outcoming.Add(clonedStreet);
+                clonedStreet.EndsAt.Incoming.Add(clonedStreet);
+                clone.Streets[i] = clonedStreet;
             }
 
             for (var i = 0; i < clone.Cars.Length; i++) {
-                clone.Cars[i] = new Car() {
+                var originalCar = Cars[i];
+                var clonedCar = new Car() {
                     Id = i,
-                    Route = Cars[i].Route
-                        .Select(s => clone.StreetMap[s.Name])
-                        .ToArray(),
+                    Route = new Street[originalCar.Route.Length],
                 };
+                for (var j = 0; j < originalCar.Route.Length; j++) {
+                    clonedCar.Route[j] = clone.StreetMap[originalCar.Route[j].Name];
+                }
+                clone.Cars[i] = clonedCar;
             }
             return clone;
         }
@@ -96,36 +102,33 @@ namespace HashCode {
         public List<Street> Incoming = new();
         public List<Street> Outcoming = new();
 
-        public List<TrafficLight> TrafficLights = new();
+        public readonly List<TrafficLight> TrafficLights = new();
 
         public bool CarJustPassed = false;
 
-        private int currentTrafficLightIndex = 0;
-        public TrafficLight CurrentTrafficLight {
-            get {
-                return TrafficLights[currentTrafficLightIndex];
-            }
-        }
+        private int _currentTrafficLightIndex = 0;
+        public TrafficLight CurrentTrafficLight => TrafficLights[_currentTrafficLightIndex];
 
         public void SetInitialState() {
             if (TrafficLights.Count == 0) return;
-            currentTrafficLightIndex = TrafficLights.Count - 1;
+            _currentTrafficLightIndex = TrafficLights.Count - 1;
         }
 
         public void SwitchTrafficLight() {
             if (TrafficLights.Count == 0) return;
-
-            if (CurrentTrafficLight.GreenSecondsLeft > 0) {
-                CurrentTrafficLight.GreenSecondsLeft--;
+            var currentTrafficLight = TrafficLights[_currentTrafficLightIndex];
+            if (currentTrafficLight.GreenSecondsLeft > 0) {
+                currentTrafficLight.GreenSecondsLeft--;
             }
-            if (CurrentTrafficLight.GreenSecondsLeft == 0) {
-                CurrentTrafficLight.State = TrafficLight.Colors.Red;
-                currentTrafficLightIndex++;
-                if (currentTrafficLightIndex >= TrafficLights.Count) {
-                    currentTrafficLightIndex = 0;
+            if (currentTrafficLight.GreenSecondsLeft == 0) {
+                currentTrafficLight.State = TrafficLight.Colors.Red;
+                _currentTrafficLightIndex++;
+                if (_currentTrafficLightIndex >= TrafficLights.Count) {
+                    _currentTrafficLightIndex = 0;
                 }
-                CurrentTrafficLight.GreenSecondsLeft = CurrentTrafficLight.GreenDuration;
-                CurrentTrafficLight.State = TrafficLight.Colors.Green;
+                currentTrafficLight = TrafficLights[_currentTrafficLightIndex];
+                currentTrafficLight.GreenSecondsLeft = currentTrafficLight.GreenDuration;
+                currentTrafficLight.State = TrafficLight.Colors.Green;
             }
         }
     }
@@ -178,7 +181,7 @@ namespace HashCode {
                 );
                 return MoveResult.WaitingInTheLine;
             } else if (CurrentStreet.TrafficLight == null ||
-                    (CurrentStreet.TrafficLight != null
+                (CurrentStreet.TrafficLight != null
                     && CurrentStreet.TrafficLight.State == TrafficLight.Colors.Red)) {
                 Logger.Debug(
                     "Car {0} is waiting for green light at intersection {1}",
@@ -187,7 +190,7 @@ namespace HashCode {
                 );
                 return MoveResult.WaitingAtRed;
             } else if (!CurrentStreet.EndsAt.CarJustPassed
-                    && (CurrentStreet.TrafficLight == null
+                && (CurrentStreet.TrafficLight == null
                     || CurrentStreet.TrafficLight.State == TrafficLight.Colors.Green)) {
                 if (++currentStreetIndex >= Route.Length) {
                     Logger.Debug("Car {0} successfully finished", Id);
@@ -199,7 +202,7 @@ namespace HashCode {
                     return MoveResult.PassedOnGreen;
                 }
             }
-            throw new System.Exception("We should not be here");
+            throw new Exception("We should not be here");
         }
 
         public enum MoveResult {
