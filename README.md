@@ -12,7 +12,7 @@ One more attempt...
 
 ![all](all.png "All")
 
-We are `190/2060` in Extended Run
+We are `187/2611` in Extended Run
 
 ![russia](russia.png "Russia")
 
@@ -109,4 +109,8 @@ $ dotnet run -i input.txt -o ./output
 | 5 | E – Etoile | 697 648 |
 | 6 | F – Forever jammed | 1 196 271 |
 
-    Total: 8 673 590
+    Total: 8 673 590 points
+
+## Our final score
+
+    Total: 9 599 097 points
