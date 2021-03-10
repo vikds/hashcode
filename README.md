@@ -6,7 +6,17 @@ We've taken part in solving Online Qualiffications of Hash Code 2021 problem `"T
 
 ## Results 
 
-![Results](results.png "Results")
+![results](results.png "Results")
+
+One more attempt...
+
+![all](results.png "All")
+
+We are 190/2060 in Extended Run
+
+![russia](russia.png "Russia")
+
+And we are 12/58 in Russia
 
 ## C++ requirements
 
