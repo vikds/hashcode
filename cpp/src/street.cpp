@@ -17,6 +17,7 @@ void Street::Reset() {
     cars.clear();
     cars_expected = 0;
     time_wasted = 0;
+    cars_passed = 0;
     car_passed = false;
     is_green = false;
 }
