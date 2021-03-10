@@ -26,7 +26,7 @@ public:
 public:
     void Reset(Model& model);
     void Tick(Model& model);
-    size_t DecrBlockedStreetsDuration(Model& model);
+    std::vector<size_t> DecrFreeStreetsDuration(Model& model);
     size_t IncrWorstStreetDuration(Model& model);
 
 private:
