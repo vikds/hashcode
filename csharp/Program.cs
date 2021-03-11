@@ -45,10 +45,10 @@ namespace HashCode {
                 var tokenSource = new CancellationTokenSource();
                 var cancellationToken = tokenSource.Token;
                 var simTask = Task.Factory.StartNew(() => {
-                    for (var i = 0; i < 20; i++) {
-                        Logger.Info($"Simulation {i + 1} started");
+                    for (var i = 0; i < 15; i++) {
+                        Logger.Info("Simulation {0} started", i + 1);
                         var freshModel = simulator.RunSimulation(cancellationToken, out long elapsedMs);
-                        Logger.Info($"Simulation {i + 1} completed. Total score is {freshModel.Score}. Took {elapsedMs / 1000.0:#.##} seconds");
+                        Logger.Info($"Simulation {i + 1} completed. Total score is {freshModel.Score}. Took {elapsedMs / 1000.0:0.##} seconds");
 
                         if (bestModel.Score < freshModel.Score) {
                             bestModel = freshModel;
@@ -57,15 +57,13 @@ namespace HashCode {
                         cancellationToken.ThrowIfCancellationRequested();
                     }
                 }, cancellationToken);
-
+                
                 try {
                     while (!simTask.IsCompleted) {
-                        if (Console.KeyAvailable) {
-                            if (Console.ReadKey(true).Key == ConsoleKey.C) {
-                                Console.WriteLine("Cancellation requested");
-                                tokenSource.Cancel();
-                                break;
-                            }
+                        if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.C) {
+                            Console.WriteLine("Cancellation requested");
+                            tokenSource.Cancel();
+                            break;
                         }
                     }
                 } catch { }

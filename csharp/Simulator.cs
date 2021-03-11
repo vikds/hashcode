@@ -44,29 +44,30 @@ namespace HashCode {
             Logger.Divider();
             for (var timer = 0; timer <= freshModel.Duration; timer++) {
                 if (token != CancellationToken.None) token.ThrowIfCancellationRequested();
-                Logger.Debug($"Timer is {timer} >>>>>>>>>>>");
+                Logger.Debug("Timer is {0} >>>>>>>>>>>", timer);
 
                 // deal with traffic lights
                 foreach (var intersection in freshModel.Intersections) {
                     intersection.CarJustPassed = false;
-                    Logger.Debug($"Checking intersection {intersection.Id}");
+                    Logger.Debug("Checking intersection {0}", intersection.Id);
                     if (intersection.TrafficLights.Count == 0) {
-                        Logger.Debug($"Intersection {intersection.Id} has no traffic lights - it's always Red");
+                        Logger.Debug("Intersection {0} has no traffic lights - it's always Red", intersection.Id);
                         continue;
                     }
                     intersection.SwitchTrafficLight();
                     foreach (var tl in intersection.TrafficLights) {
                         Logger.Debug(tl.State == TrafficLight.Colors.Green
-                                         ? $"Traffic light on street {tl.Street.Name} is {tl.State}. Seconds left {tl.GreenSecondsLeft}"
-                                         : $"Traffic light on street {tl.Street.Name} is {tl.State}");
+                                         ? "Traffic light on street {0} is {1}. Seconds left {2}"
+                                         : "Traffic light on street {0} is {1}",
+                                     tl.Street.Name, tl.State, tl.GreenSecondsLeft);
                     }
                 }
 
                 // deal with cars
                 foreach (var car in freshModel.Cars) {
-                    Logger.Debug($"Checking car {car.Id}");
+                    Logger.Debug("Checking car {0}", car.Id);
                     if (car.Finished) {
-                        Logger.Debug($"Car {car.Id} has already finished - skipping");
+                        Logger.Debug("Car {0} has already finished - skipping", car.Id);
                         continue;
                     }
                     // var prevStreet = car.CurrentStreet;
@@ -93,11 +94,13 @@ namespace HashCode {
                     if (car.Finished) {
                         var score = freshModel.Bonus + (freshModel.Duration - timer);
                         Logger.Debug(
-                            $"Car {car.Id} has just finished with score {score} = {freshModel.Bonus} + ({freshModel.Duration} - {timer})"
+                            "Car {0} has just finished with score {1} = {2} + ({3} - {4})",
+                            car.Id, score, freshModel.Bonus, freshModel.Duration, timer
                         );
                         freshModel.Score += score;
                     } else {
-                        Logger.Debug($"Car {car.Id} is currently on street {car.CurrentStreet.Name}. Left on current street {car.LeftOnCurrentStreet}");
+                        Logger.Debug("Car {0} is currently on street {1}. Left on current street {2}",
+                                     car.Id, car.CurrentStreet.Name, car.LeftOnCurrentStreet);
                     }
                 }
 
@@ -115,7 +118,7 @@ namespace HashCode {
                 //     }
                 // }
 
-                Logger.Debug($"Timer {timer} finished <<<<<<<<<<<");
+                Logger.Debug("Timer {0} finished <<<<<<<<<<<", timer);
                 Logger.Divider();
             }
 
