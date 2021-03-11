@@ -12,11 +12,11 @@ One more attempt...
 
 ![all](all.png "All")
 
-We are `187/2611` in Extended Run
+We are `180/2626` in Extended Run
 
 ![russia](russia.png "Russia")
 
-And we are `12/58` in Russia
+And we are `13/59` in Russia
 
 ## C++ requirements
 
@@ -57,11 +57,11 @@ $ ./hashcode --input=../../input/a.txt \
 | 1 | A – An example | 2 002 |
 | 2 | B – By the ocean | 4 567 082 |
 | 3 | C – Checkmate | 1 300 268 |
-| 4 | D – Daily commute | 1 612 370 |
-| 5 | E – Etoile | 709 460 |
+| 4 | D – Daily commute | 1 638 415 |
+| 5 | E – Etoile | 723 521 |
 | 6 | F – Forever jammed | 1 393 854 |
 
-    Total: 9 585 036 points
+    Total: 9 625 142 points
 
 ## Building C# code
 [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) is required to build C# code located in `./csharp` folder. It's a completely separated version of the solution and not related in any way to a C++ code.
@@ -113,4 +113,4 @@ $ dotnet run -i input.txt -o ./output
 
 ## Our final score
 
-    Total: 9 599 097 points
+    Total: 9 625 142 points
