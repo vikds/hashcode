@@ -51,15 +51,27 @@ Signaling Solution::GetBestSignaling() {
         // rotation can be paralleled for different model[thread]: OMP?
         size_t schedule_size = best_signaling.traffic_lights[index].schedule.size();
         size_t max_rotations = std::min(rotations, schedule_size);
-        Signaling signaling = best_signaling;
-        Schedule& worst_schedule = signaling.traffic_lights[index].schedule;
-        std::sort(worst_schedule.begin(), worst_schedule.end(),
+        Schedule sorted_schedule = best_signaling.traffic_lights[index].schedule;
+        std::sort(sorted_schedule.begin(), sorted_schedule.end(),
             [&] (const ProceedSignal& lhs, const ProceedSignal& rhs) {
                 return model.streets[lhs.street_id].time_wasted > model.streets[rhs.street_id].time_wasted;
             }
         );
-        for (size_t rotation = 0; rotation < schedule_size; rotation++, iterations++) {
-            std::rotate(worst_schedule.begin(), worst_schedule.begin() + rotation, worst_schedule.end());
+        for (size_t rotation = 0; rotation < schedule_size / 2; rotation++, iterations++) {
+            Signaling signaling = best_signaling;
+            Schedule& schedule = signaling.traffic_lights[index].schedule;
+            size_t min_index = 0;
+            size_t max_index = 0;
+            for (size_t index = 0; index < schedule_size; index++) {
+                const ProceedSignal& signal = schedule[index];
+                if (signal.street_id == sorted_schedule[rotation].street_id) {
+                    max_index = index;
+                }
+                if (signal.street_id == sorted_schedule[schedule_size - rotation - 1].street_id) {
+                    min_index = index;
+                }
+            }
+            std::swap(schedule[max_index], schedule[min_index]);
             score = Simulator::Run(model, signaling, std::string("Schedule rotation ") + std::to_string(rotation));
             if (score > best_score) {
                 best_signaling = signaling;
