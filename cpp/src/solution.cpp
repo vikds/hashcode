@@ -55,16 +55,11 @@ Signaling Solution::GetBestSignaling() {
         Schedule& worst_schedule = signaling.traffic_lights[index].schedule;
         std::sort(worst_schedule.begin(), worst_schedule.end(),
             [&] (const ProceedSignal& lhs, const ProceedSignal& rhs) {
-                return model.streets[lhs.street_id].time_wasted < model.streets[rhs.street_id].time_wasted;
+                return model.streets[lhs.street_id].time_wasted > model.streets[rhs.street_id].time_wasted;
             }
         );
-        for (size_t rotation = 0; rotation < max_rotations / 2; rotation++, iterations++) {
-            std::swap(worst_schedule[0], worst_schedule[schedule_size - rotation - 1]);
-            // if (model.seed()) {
-            //     std::shuffle(worst_schedule.begin(), worst_schedule.end(), model.random_generator);
-            // } else {
-            //     std::rotate(worst_schedule.begin(), worst_schedule.begin() + rotation, worst_schedule.end());
-            // }
+        for (size_t rotation = 0; rotation < schedule_size; rotation++, iterations++) {
+            std::rotate(worst_schedule.begin(), worst_schedule.begin() + rotation, worst_schedule.end());
             score = Simulator::Run(model, signaling, std::string("Schedule rotation ") + std::to_string(rotation));
             if (score > best_score) {
                 best_signaling = signaling;
