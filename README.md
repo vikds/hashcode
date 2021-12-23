@@ -10,12 +10,6 @@ https://codingcompetitions.withgoogle.com/hashcode/
 
 [Certificate](https://codingcompetitions.withgoogle.com/hashcode/certificate/summary/0000000000435809)
 
-### Online Qualifications
-
-![results](results.png "Results")
-
-One more attempt...
-
 ### Extended Run
 
 ![all](all.png "All")
