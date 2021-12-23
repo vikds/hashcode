@@ -1,14 +1,20 @@
 # Google HashCode just for fun
 
-## Online Qualifications 2021
-
 We've taken part in solving Online Qualiffications of Hash Code 2021 problem `"Traffic signaling"` for the first time. Our result was `8,446,233` points, while the best score was `10,586,135` (`3359/9004`). We would like to improve our result, and even arrange a small competition between ourselves. That's all just for fun.
 
-## Results 
+## Certificate
+
+![certificate](certificate.png "Certificate")
+
+[Certificate](https://codingcompetitions.withgoogle.com/hashcode/certificate/summary/0000000000435809)
+
+## Online Qualifications 2021
 
 ![results](results.png "Results")
 
 One more attempt...
+
+## Extended Run 2021
 
 ![all](all.png "All")
 
