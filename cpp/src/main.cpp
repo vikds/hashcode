@@ -33,7 +33,7 @@ Arguments ParseArguments(int argc, char* argv[]) {
     };
     int ch;
     const char* binary_name = argv[0];
-    while ((ch = getopt_long(argc, argv, "i:o:h", long_options, nullptr )) != -1) {
+    while ((ch = getopt_long(argc, argv, "i:o:a:r:s:h", long_options, nullptr )) != -1) {
         switch (ch) {
             case 'i':
                 arguments.input_file = optarg;
@@ -73,7 +73,7 @@ Arguments ParseArguments(int argc, char* argv[]) {
 }
 
 bool file_exist(const std::string& file_name) {
-  return access(file_name.c_str(), F_OK) != -1;
+    return access(file_name.c_str(), F_OK) != -1;
 }
 
 bool delete_file(const std::string& file_name) {
