@@ -6,17 +6,17 @@ https://codingcompetitions.withgoogle.com/hashcode/
 
 ## Certificate
 
-![certificate](certificate.png "Certificate")
+![certificate](2021/certificate.png "Certificate")
 
 [Certificate](https://codingcompetitions.withgoogle.com/hashcode/certificate/summary/0000000000435809)
 
 ### Extended Run
 
-![all](all.png "All")
+![all](2021/all.png "All")
 
 We are `180/2626` in Extended Run
 
-![russia](russia.png "Russia")
+![russia](2021/russia.png "Russia")
 
 And we are `13/59` in Russia
 
