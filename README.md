@@ -4,7 +4,7 @@ We've taken part in solving Online Qualiffications of Hash Code 2021 problem `"T
 
 https://codingcompetitions.withgoogle.com/hashcode/
 
-## Certificate
+## Certificate 2021
 
 ![certificate](2021/certificate.png "Certificate")
 
