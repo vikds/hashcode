@@ -2,7 +2,7 @@
 
 We've taken part in solving Online Qualiffications of Hash Code 2021 problem `"Traffic signaling"` for the first time. Our result was `8 446 233` points, while the best score was `10 586 135` (`3359/9004`).
 
-The second time in solving Online Qualiffications of Hash Code 2022 problem `"Mentorship and Teamwork"` we got almost the same: `981 610` points out of `4 813 509` (`3473/9031`). Just did not have time (about 30 minutes of calcuation) to submit 2 good solutions (E, F) during contest 🤷‍♂️.
+The second time in solving Online Qualiffications of Hash Code 2022 problem `"Mentorship and Teamwork"` we got almost the same: `981 610` points out of `4 813 509` (`3473/9031`). Just did not have time (about 30 minutes of calculation) to submit 2 good solutions (E, F) during contest 🤷‍♂️.
 
 https://codingcompetitions.withgoogle.com/hashcode/
 
