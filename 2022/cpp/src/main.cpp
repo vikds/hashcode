@@ -95,6 +95,102 @@ bool delete_file(const std::string& file_name) {
     return unlink(file_name.c_str()) != -1;
 }
 
+using Strings = std::vector<std::string>;
+
+struct Skill {
+    std::string name;
+    int level;
+};
+
+using Skills = std::vector<Skill>;
+
+struct Contrib {
+    std::string name;
+    Skills skills;
+};
+
+using Contribs = std::vector<Contrib>;
+
+struct Project {
+    std::string name;
+    int duration;
+    int score;
+    int deadline;
+    Skills skills;
+};
+
+using Projects = std::vector<Project>;
+
+struct Input {
+    Contribs contribs;
+    Projects projects;
+};
+
+void ReadInput(const Arguments& args, Input& data) {
+    std::ifstream input(args.input_file);
+    int contrib_num, project_num;
+    input >> contrib_num >> project_num;
+
+    int skill_num;
+    for (int i = 0; i < contrib_num; i++) {
+        Contrib contrib;
+        input >> contrib.name;
+        input >> skill_num;
+        for (int j = 0; j < skill_num; j++) {
+            Skill skill;
+            input >> skill.name;
+            input >> skill.level;
+            contrib.skills.push_back(skill);
+        }
+        data.contribs.push_back(contrib);
+    }
+
+    int role_num;
+    for (int i = 0; i < project_num; i++) {
+        Project project;
+        input >> project.name;
+        input >> project.duration;
+        input >> project.score;
+        input >> project.deadline;
+        input >> role_num;
+        for (int j = 0; j < role_num; j++) {
+            Skill skill;
+            input >> skill.name;
+            input >> skill.level;
+            project.skills.push_back(skill);
+        }
+        data.projects.push_back(project);
+    }
+}
+
+struct Assign {
+    std::string project_name;
+    Strings contrib_names;
+};
+
+using Assigns = std::vector<Assign>;
+
+struct Output {
+    Assigns assigns;
+};
+
+void PrintOutput(const Arguments& args, Output& data) {
+    std::ofstream output(args.output_file);
+    output << data.assigns.size() << std::endl;
+    for (const Assign& assign: data.assigns) {
+        output << assign.project_name << std::endl;
+        bool first = false;
+        for (const std::string& contrib_name: assign.contrib_names) {
+            if (!first) {
+                output << " ";
+            }
+            output << contrib_name;
+        }
+        output << std::endl;
+    }
+}
+
+
 int main(int argc, char* argv[]) {
     try {
         Arguments args = ParseArguments(argc, argv);
@@ -107,19 +203,11 @@ int main(int argc, char* argv[]) {
             delete_file(args.output_file);
         }
 
-        std::ifstream input(args.input_file);
-        // input >> line;
-        std::string line;
-        std::vector<std::string> lines;
-        while (std::getline(input, line)) {
-            std::cout << line << std::endl;
-            lines.push_back(line);
-        }
+        Input input;
+        ReadInput(args, input);
 
-        std::ofstream output(args.output_file);
-        for (const std::string& line: lines) {
-            output << line << std::endl;
-        }
+        Output output;
+        PrintOutput(args, output);
 
     } catch(const std::exception& ex) {
         return EXIT_FAILURE;
