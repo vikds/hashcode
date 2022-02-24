@@ -1,11 +1,22 @@
+#include <algorithm>
+#include <chrono>
+#include <deque>
+#include <fstream>
+#include <functional>
 #include <getopt.h>
+#include <iostream>
+#include <iterator>
+#include <limits>
+#include <iomanip>
+#include <random>
+#include <sstream>
+#include <string>
 #include <sysexits.h>
 #include <unistd.h>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
-#include "fwd.hpp"
-#include "model.hpp"
-
-using namespace hashcode;
 
 void Usage(const char* binary_name) {
     std::cerr << "Usage: " << binary_name << " [-io] [-i input][-o output]" << std::endl;
@@ -15,6 +26,20 @@ void Usage(const char* binary_name) {
     std::cerr << "\t-h|--help: show this usage" << std::endl;
     std::exit(EX_USAGE);
 }
+
+struct Arguments {
+    std::string input_file;
+    std::string output_file;
+    size_t seed = 0;
+
+    std::string ToString(const char* binary_name) const {
+        std::ostringstream oss;
+        oss << binary_name << " arguments:" << std::endl;
+        oss << "--input: " << input_file << std::endl;
+        oss << "--output: " << output_file;
+        return oss.str();
+    }
+};
 
 Arguments ParseArguments(int argc, char* argv[]) {
     Arguments arguments;
@@ -57,6 +82,7 @@ Arguments ParseArguments(int argc, char* argv[]) {
         std::cerr << oss.str();
         Usage(binary_name);
     }
+    std::cout << arguments.ToString(binary_name) << std::endl;
     return arguments;
 }
 
@@ -79,7 +105,21 @@ int main(int argc, char* argv[]) {
         if (file_exist(args.output_file)) {
             delete_file(args.output_file);
         }
-        // TODO
+
+        std::ifstream input(args.input_file);
+        // input >> line;
+        std::string line;
+        std::vector<std::string> lines;
+        while (std::getline(input, line)) {
+            std::cout << line << std::endl;
+            lines.push_back(line);
+        }
+
+        std::ofstream output(args.output_file);
+        for (const std::string& line: lines) {
+            output << line << std::endl;
+        }
+
     } catch(const std::exception& ex) {
         return EXIT_FAILURE;
     }
