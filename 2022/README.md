@@ -2,7 +2,7 @@
 
 ## Top Scores
 
-![top_scores](top_scores.png "Certificate")
+![top_scores](top_scores.png "Top Scores")
 
 ## Qualification Round C++ results
 
