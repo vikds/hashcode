@@ -17,13 +17,14 @@
 #include <unordered_set>
 #include <vector>
 
+static const std::string VERSION = "2022.02.24 16:26";
 
 void Usage(const char* binary_name) {
     std::cerr << "Usage: " << binary_name << " [-io] [-i input][-o output]" << std::endl;
     std::cerr << "\t-i|--input (required): input file" << std::endl;
     std::cerr << "\t-o|--output (required): output file" << std::endl;
     std::cerr << "\t-s|--seed: random number generator seed to improve result (default: 0)" << std::endl;
-    std::cerr << "\t-h|--help: show this usage" << std::endl;
+    std::cerr << "\t-h|--help: show this usage (ver. " << VERSION << ")" << std::endl;
     std::exit(EX_USAGE);
 }
 
