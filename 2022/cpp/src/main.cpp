@@ -17,7 +17,7 @@
 #include <unordered_set>
 #include <vector>
 
-static const std::string VERSION = "2022.02.24 19:50";
+static const std::string VERSION = "2022.02.24 21:33";
 
 void Usage(const char* binary_name) {
     std::cerr << "Usage: " << binary_name << " [-io] [-i input][-o output]" << std::endl;
@@ -189,6 +189,11 @@ void PrintOutput(const Arguments& args, Output& data) {
         output << std::endl;
     }
 }
+
+strcut Model {
+
+};
+
 
 
 int main(int argc, char* argv[]) {
