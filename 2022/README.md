@@ -17,7 +17,7 @@ We are `3473/9031` in Qualification Round
 
     Total: 981 610 points (out of 4 813 509)
 
-## Practice mode C++ results (Did not have time to submit during contest 🤷‍♂️)
+## Practice mode C++ results (Did not have time to submit E, F during contest 🤷‍♂️)
 
 |   | Name | Score |
 | - | - | - |
@@ -30,4 +30,3 @@ We are `3473/9031` in Qualification Round
 
     Total: 2 926 188 points 🤷‍♂️
 
-## 
