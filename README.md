@@ -10,9 +10,13 @@ https://codingcompetitions.withgoogle.com/hashcode/
 
 ![certificate](2021/certificate.png "Certificate")
 
-    Total: 8 446 233 points
+Result: `3359` / `9004`
 
 [Certificate](https://codingcompetitions.withgoogle.com/hashcode/certificate/summary/0000000000435809)
+
+## Certificate 2022
+
+Result: `3473` / `9031`
 
 ## C++ requirements
 
