@@ -19,8 +19,8 @@ We are `3473/9031` in Qualification Round
 
 ## Practice mode C++ results (Did not have time to submit during contest 🤷‍♂️)
 
-|   | Name | Score | Top Score |
-| - | - | - | - |
+|   | Name | Score |
+| - | - | - |
 | 1 | A – An example | 33 |
 | 2 | B – Better start small | 743 841 |
 | 3 | C – Collaboration | 72 564 |
