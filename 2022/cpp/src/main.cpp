@@ -293,7 +293,7 @@ Strings AssignContribs(const Project& project, Contribs& contribs) {
     return result;
 }
 
-Output ExcetuteInProjectsOrder(Input& model) {
+Output ExecuteInProjectsOrder(Input& model) {
     Output output;
 
     int day = 0;
@@ -363,19 +363,19 @@ int main(int argc, char* argv[]) {
                     std::sort(model.projects.begin(), model.projects.end(), [&](const Project& lhs, const Project& rhs) {
                         return lhs.duration < rhs.duration;
                     });
-                    current = ExcetuteInProjectsOrder(model);
+                    current = ExecuteInProjectsOrder(model);
                     break;
                 case Order::Largest:
                     std::sort(model.projects.begin(), model.projects.end(), [&](const Project& lhs, const Project& rhs) {
                         return lhs.score < rhs.score;
                     });
-                    current = ExcetuteInProjectsOrder(model);
+                    current = ExecuteInProjectsOrder(model);
                     break;
                 case Order::Nearest:
                     std::sort(model.projects.begin(), model.projects.end(), [&](const Project& lhs, const Project& rhs) {
                         return lhs.deadline < rhs.deadline;
                     });
-                    current = ExcetuteInProjectsOrder(model);
+                    current = ExecuteInProjectsOrder(model);
                     break;
             }
             if (current.score > result.score) {
