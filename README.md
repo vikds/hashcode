@@ -16,7 +16,11 @@ Result: `3359` / `9004`
 
 ## Certificate 2022
 
+![certificate](2022/certificate.png "Certificate")
+
 Result: `3473` / `9031`
+
+[Certificate](https://codingcompetitions.withgoogle.com/hashcode/certificate/summary/00000000008cb4d4)
 
 ## C++ requirements
 
